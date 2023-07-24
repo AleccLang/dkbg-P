@@ -1,0 +1,10 @@
+com\demo\App.class
+com\demo\KBGenerator.class
+com\demo\KBGeneratorThreaded.class
+com\demo\Atom.class
+com\demo\AtomBuilder.class
+com\demo\Rules.class
+com\demo\Formula.class
+com\demo\FormulaBuilder.class
+com\demo\Connective.class
+com\demo\Distribution.class

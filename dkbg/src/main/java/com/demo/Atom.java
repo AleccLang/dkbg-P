@@ -1,0 +1,32 @@
+package com.demo;
+
+public class Atom{
+    private static Connective con = Connective.getInstance();
+    private String atom;
+
+    public Atom(){
+        this.atom = null;
+    }
+
+    public Atom(Atom x){
+        this.atom = new String(x.atom);
+    }
+
+    public void setAtom(String string){
+        atom = string;
+    }
+
+    public void negateAtom(){
+        if(atom.startsWith(con.getNegationSymbol())){
+            atom = atom.substring(1);
+        }
+        else{
+            atom = con.getNegationSymbol() + atom;
+        }
+    }
+
+    @Override
+    public String toString(){
+        return  atom;
+    }
+}
