@@ -22,7 +22,6 @@ public class KBGenerator{
             //System.out.println("Rank: " + rank);
             ArrayList<Formula> formulas = new ArrayList<Formula>();
             ArrayList<Atom> curRankAtoms = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent.
-            ArrayList<Atom> cRA_noRBA = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent without the rank's base-antecedent.
             ArrayList<Atom> anyRankAtomsTemp = new ArrayList<Atom>();
             int formulaNum = formulaDistribution[rank];
             if(rank==0){
@@ -56,7 +55,6 @@ public class KBGenerator{
                             // Adds formula with a new atom as antecedent and random curRankAtom as consequent.
                             Atom[] temp = FormulaBuilder.recycleAntecedent(generator, formulas, curRankAtoms.get(i));
                             curRankAtoms.add(temp[0]);
-                            cRA_noRBA.add(temp[0]);
                             formulaNum--;
                             break;
                         case 1:
@@ -70,7 +68,6 @@ public class KBGenerator{
                             if(anyRankAtoms.size()==0){
                                 temp = FormulaBuilder.recycleAntecedent(generator, formulas, curRankAtoms.get(i));
                                 curRankAtoms.add(temp[0]);
-                                cRA_noRBA.add(temp[0]);
                             }
                             else{
                                 int j = (int)(Math.random() * anyRankAtoms.size()); // Get random atom from atoms usable in any rank. 
