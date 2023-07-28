@@ -219,14 +219,14 @@ public class App
                     KB = KBGenerator.KBGenerate(formulaDistribution, simple, reuseConsequent, complexityAnt, complexityCon, connectiveTypes);
                     long endTime = System.currentTimeMillis();
                     long executionTime = endTime - startTime;
-                    System.out.println("Time taken for KB generation (in milliseconds): " + executionTime);
+                    System.out.println("Time taken for standard KB generation (in milliseconds): " + executionTime);
                 }
                 else{
                     long startTime = System.currentTimeMillis();
                     KB = KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes); // Always reuses the consequent.
                     long endTime = System.currentTimeMillis();
                     long executionTime = endTime - startTime;
-                    System.out.println("Time taken for KB generation (in milliseconds): " + executionTime);
+                    System.out.println("Time taken for threaded KB generation (in milliseconds): " + executionTime);
                 }
 
 

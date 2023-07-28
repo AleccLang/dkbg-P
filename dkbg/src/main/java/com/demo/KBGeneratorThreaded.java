@@ -50,7 +50,7 @@ public class KBGeneratorThreaded{
         return KB;
     }
 
-    private static LinkedHashSet<Formula> generateRank(int rank, int[] formulaDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType, Atom rankBuildCons, Atom[] rankBuildAnts ){
+    private static LinkedHashSet<Formula> generateRank(int rank, int[] formulaDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType, Atom rankBuildCons, Atom[] rankBuildAnts){
 
         ArrayList<ArrayList<String>> choice = new ArrayList<>();
 
