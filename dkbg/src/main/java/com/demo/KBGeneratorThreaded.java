@@ -7,13 +7,12 @@ import java.util.concurrent.*;
 // At the end it must generate 1 statement for each rank to tie them all together.
 public class KBGeneratorThreaded{
 
-    private static Connective con = Connective.getInstance();
     private static AtomBuilder generator = AtomBuilder.getInstance();
     private static int numThreads = Runtime.getRuntime().availableProcessors();
     
 
 
-    public static LinkedHashSet<LinkedHashSet<Formula>> KBGenerateThreaded(int[] formulaDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
+    public static LinkedHashSet<LinkedHashSet<Formula>> KBGenerate(int[] formulaDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
         LinkedHashSet<LinkedHashSet<Formula>> KB = new LinkedHashSet<LinkedHashSet<Formula>>();
         Atom rankBuildCons = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
@@ -37,9 +36,6 @@ public class KBGeneratorThreaded{
             executor.shutdown();
         }
 
-        // for(int i = 1; i < rankBuildAnts.length; i++){
-        //     System.out.println(rankBuildAnts[i]);
-        // }
         boolean firstSetProcessed = false;
         int i = 1;
         for(LinkedHashSet<Formula> set : KB){
@@ -47,22 +43,9 @@ public class KBGeneratorThreaded{
                 firstSetProcessed = true;
                 continue;
             }
-            // for (Formula element : set){
-            //     System.out.print(element.toString());
-            // }
             set.add(new Formula(rankBuildAnts[i].toString(), new Atom(rankBuildAnts[i-1]).toString()));
-            System.out.println();
             i++;
         }
-
-        // System.out.print("Array: [");
-        // for (int j = 0; j < rankBuildAnts.length; j++) {
-        //     System.out.print(rankBuildAnts[j]);
-        //     if (i < rankBuildAnts.length - 1) {
-        //         System.out.print(", ");
-        //     }
-        // }
-        // System.out.println("]");
 
         return KB;
     }
@@ -72,13 +55,12 @@ public class KBGeneratorThreaded{
         ArrayList<ArrayList<String>> choice = new ArrayList<>();
 
         Random random = new Random();
-        LinkedHashSet<LinkedHashSet<Formula>> KB = new LinkedHashSet<LinkedHashSet<Formula>>(); // Creating KB.
         Atom rankBuildAnt = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
         synchronized(rankBuildAnts){
             rankBuildAnts[rank] = rankBuildAnt;
         }
         
-        //System.out.println("Rank: " + rank);
+        System.out.println("Rank: " + rank);
         ArrayList<Formula> formulas = new ArrayList<Formula>();
         ArrayList<Atom> curRankAtoms = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent.
         int formulaNum = formulaDistribution[rank];
@@ -99,9 +81,9 @@ public class KBGeneratorThreaded{
             formulaNum = formulaNum - 1;
         }
         while(formulaNum!=0){
-            //System.out.println("In while. fiormulaNum = " + formulaNum);
+            //System.out.println("In while. formulaNum = " + formulaNum);
             if(simpleOnly == true){
-                int decision = random.nextInt(3); // Using this for now to pick between different rules to generate formulas.
+                int decision = random.nextInt(2); // Using this for now to pick between different rules to generate formulas.
                 // c.add(decision);
                 //System.out.println(decision);
                 int i = (int)(Math.random() * curRankAtoms.size()); // Get random atom from atoms usable in current rank.
@@ -155,52 +137,52 @@ public class KBGeneratorThreaded{
         return new LinkedHashSet<>(formulas);
     }
 
-    public static void main(String[] args){
-        Rules r = new Rules();
+    // public static void main(String[] args){
+    //     Rules r = new Rules();
         
-        con.setConjunctionSymbol("&");
-        con.setDisjunctionSymbol("||");
-        con.setImplicationSymbol("=>");
-        con.setBiImplicationSymbol("<=>");
-        con.setNegationSymbol("!");
-        generator.setCharacters("lowerlatin");
+    //     con.setConjunctionSymbol("&");
+    //     con.setDisjunctionSymbol("||");
+    //     con.setImplicationSymbol("=>");
+    //     con.setBiImplicationSymbol("<=>");
+    //     con.setNegationSymbol("!");
+    //     generator.setCharacters("lowerlatin");
 
-        System.out.println("Knowledgebase:");
-        int[] a = {2,3,4,5,4};
-        int[] complexityAnt = {0,1,2};
-        int[] complexityCon = {0,1,2};
-        int[] connectiveType = {1,2,3,4,5};
-        LinkedHashSet<LinkedHashSet<Formula>> KB = KBGenerateThreaded(a, false, complexityAnt, complexityCon, connectiveType);
-        //System.out.println(KB);
-        //ArrayList b = new ArrayList();
-        int i = 0;
-        for (LinkedHashSet<Formula> set : KB){
-            System.out.print("Rank " + i + ": ");
-            Iterator<Formula> iterator = set.iterator();
-            while (iterator.hasNext()){
-                Formula element = iterator.next();
-                System.out.print(element.toString());
+    //     System.out.println("Knowledgebase:");
+    //     int[] a = {2,3,4,5,4};
+    //     int[] complexityAnt = {0,1,2};
+    //     int[] complexityCon = {0,1,2};
+    //     int[] connectiveType = {1,2,3,4,5};
+    //     LinkedHashSet<LinkedHashSet<Formula>> KB = KBGenerate(a, false, complexityAnt, complexityCon, connectiveType);
+    //     //System.out.println(KB);
+    //     //ArrayList b = new ArrayList();
+    //     int i = 0;
+    //     for (LinkedHashSet<Formula> set : KB){
+    //         System.out.print("Rank " + i + ": ");
+    //         Iterator<Formula> iterator = set.iterator();
+    //         while (iterator.hasNext()){
+    //             Formula element = iterator.next();
+    //             System.out.print(element.toString());
                 
-                // Print comma if there is a next element, otherwise print a newline
-                if (iterator.hasNext()){
-                    System.out.print(", ");
-                } else{
-                    System.out.println();
-                }
-            }
-            i++;
-        }
+    //             // Print comma if there is a next element, otherwise print a newline
+    //             if (iterator.hasNext()){
+    //                 System.out.print(", ");
+    //             } else{
+    //                 System.out.println();
+    //             }
+    //         }
+    //         i++;
+    //     }
 
-        // for(LinkedHashSet<Formula> set : KB){
-        //     for (Formula element : set){
-        //         System.out.println(element.toString());
-        //     }
-        // }
+    //     // for(LinkedHashSet<Formula> set : KB){
+    //     //     for (Formula element : set){
+    //     //         System.out.println(element.toString());
+    //     //     }
+    //     // }
 
-        // for(int i=0; i<b.size(); i++){
-        //     System.out.println(b.get(i));
-        // }
-    }
+    //     // for(int i=0; i<b.size(); i++){
+    //     //     System.out.println(b.get(i));
+    //     // }
+    // }
 
 
 }

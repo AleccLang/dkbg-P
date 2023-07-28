@@ -4,10 +4,9 @@ import java.util.*;
 
 public class KBGenerator{
     
-    private static Connective con = Connective.getInstance();
     private static AtomBuilder generator = AtomBuilder.getInstance();
 
-    public static LinkedHashSet<LinkedHashSet<Formula>> KBGenerate(int[] formulaDistribution, boolean simpleOnly, boolean reuseAntecedent, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
+    public static LinkedHashSet<LinkedHashSet<Formula>> KBGenerate(int[] formulaDistribution, boolean simpleOnly, boolean reuseConsequent, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
 
         ArrayList<ArrayList<String>> choice = new ArrayList<>();
 
@@ -29,12 +28,12 @@ public class KBGenerator{
                 FormulaBuilder.rankZero(formulas, rankBuildCons, rankBuildAnt);
             }
             else{
-                if(reuseAntecedent == false && formulaNum >=3){ // Don't reuse the original rankBuildAnt in all ranks
+                if(reuseConsequent == false && formulaNum >=3){ // Don't reuse the original rankBuildCons in all ranks
                     //System.out.println("In if ");
                     FormulaBuilder.rankBuilder(generator, formulas, rankBuildCons, rankBuildAnt);
                     formulaNum--;
                 }
-                else{ // Reuse the original rankBuildAnt in all ranks
+                else{ // Reuse the original rankBuildCons in all ranks
                     //System.out.println("In else ");
                     FormulaBuilder.rankBuilderConstricted(generator, formulas, rankBuildCons, rankBuildAnt);
                 }

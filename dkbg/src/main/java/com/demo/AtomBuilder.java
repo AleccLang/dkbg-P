@@ -85,6 +85,15 @@ public class AtomBuilder{
             case 14424:
                 length = 4;
                 break;
+            case 346200:
+                length = 5;
+                break;
+            case 8308824:
+                length = 6;
+                break;
+            case 199411800:
+                length = 7;
+                break;
         }
     }
 

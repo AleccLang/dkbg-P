@@ -15,14 +15,15 @@ import java.util.Scanner;
 * 2) No. formulas [int]
 * 3) Distribution [options] // min 2 per rank, other than rank 0
 * 4) Simple only [y/n]
-* 5) Reuse Antecedent [y/n]
+* 5) Reuse Consequent [y/n]
 * 6) Antecedent complexity (if simple only then skip)  [0,1,2] choose any number
 * 7) Consequent complexity (if simple only then skip) [0,1,2] choose any number
-* 7) Connective types [1,2,3,4,5] choose any number (1=disjuntion, 2=conjunction, 3=implication, 4=biimplication, 5=mix) if 1:1 1:2 2:1 2:2 then imp/bi-imp won't work.
-* 8) Choose connective symbols [defeasible implication, disjuntion, conjunction, implication, biimplication)]
-* 9) Choose atom character set [lowerlatin, upperlatin, altlatin, greek]
-* 10) Choose if you just want it printed or if you also want a txt file.
-* 11) Choose if you want to regenerate a new KB using same settings, change the settings, or quit.
+* 8) Connective types [1,2,3,4,5] choose any number (1=disjuntion, 2=conjunction, 3=implication, 4=biimplication, 5=mix) if 1:1 1:2 2:1 2:2 then imp/bi-imp won't work.
+* 9) Choose connective symbols [defeasible implication, disjuntion, conjunction, implication, biimplication)]
+* 10) Choose atom character set [lowerlatin, upperlatin, altlatin, greek]
+* 11) Choose which generator to use [standard, threaded]
+* 12) Choose if you just want it printed or if you also want a txt file.
+* 13) Choose if you want to regenerate a new KB using same settings, change the settings, or quit.
 */
 public class App 
 {
@@ -77,10 +78,10 @@ public class App
             String smple = in.next(); // Knowledge base generation using only simple formulas
             boolean simple = (smple.equalsIgnoreCase("y")) ? true : false;
 
-            System.out.println("Reuse Antecedent? [y, n]:");
+            System.out.println("Reuse Consequent? [y, n]:");
             System.out.print("> ");
             String reuseAnt = in.next(); // Reuse the rankBuildAntecedent to generate ranks in the knowledge base
-            boolean reuseAntecedent = (reuseAnt.equalsIgnoreCase("y")) ? true : false;
+            boolean reuseConsequent = (reuseAnt.equalsIgnoreCase("y")) ? true : false;
 
             if(simple == false){
                 System.out.println("Antecedent complexity [0, 1, 2]:");
@@ -204,15 +205,30 @@ public class App
 
                 // System.out.println("formulaDistribution:" + Arrays.toString(formulaDistribution));
                 // System.out.println("simple:" + simple);
-                // System.out.println("reuseAntecedent:" + reuseAntecedent);
+                // System.out.println("reuseConsequent:" + reuseConsequent);
                 // System.out.println("complexityAnt:" + Arrays.toString(complexityAnt));
                 // System.out.println("complexityCon:" + Arrays.toString(complexityCon));
                 // System.out.println("connectiveTypes:" + Arrays.toString(connectiveTypes));
-                
-
+                System.out.println("Generator type? [s (standard), e (efficient)]:");
+                System.out.print("> ");
+                String type = in.next(); // Knowledge base generation using only simple formulas
                 System.out.println("Generating Knowledge Base:");
-                LinkedHashSet<LinkedHashSet<Formula>> KB = KBGenerator.KBGenerate(formulaDistribution, simple, reuseAntecedent, complexityAnt, complexityCon, connectiveTypes);
-                System.out.println(KB);
+                LinkedHashSet<LinkedHashSet<Formula>> KB;
+                if(type.equalsIgnoreCase("s")){
+                    long startTime = System.currentTimeMillis();
+                    KB = KBGenerator.KBGenerate(formulaDistribution, simple, reuseConsequent, complexityAnt, complexityCon, connectiveTypes);
+                    long endTime = System.currentTimeMillis();
+                    long executionTime = endTime - startTime;
+                    System.out.println("Time taken for KB generation (in milliseconds): " + executionTime);
+                }
+                else{
+                    long startTime = System.currentTimeMillis();
+                    KB = KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes); // Always reuses the consequent.
+                    long endTime = System.currentTimeMillis();
+                    long executionTime = endTime - startTime;
+                    System.out.println("Time taken for KB generation (in milliseconds): " + executionTime);
+                }
+
 
                 System.out.println("Save to text file? [y, n]:");
                 System.out.print("> ");
