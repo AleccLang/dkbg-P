@@ -37,21 +37,37 @@ public class KBGeneratorThreaded{
             executor.shutdown();
         }
 
-        // Add the final formula for each rank here (except the first or last ones)
-        System.out.print("Array: [");
-        for (int i = 0; i < rankBuildAnts.length; i++) {
-            System.out.print(rankBuildAnts[i]);
-            if (i < rankBuildAnts.length - 1) {
-                System.out.print(", ");
+        // for(int i = 1; i < rankBuildAnts.length; i++){
+        //     System.out.println(rankBuildAnts[i]);
+        // }
+        boolean firstSetProcessed = false;
+        int i = 1;
+        for(LinkedHashSet<Formula> set : KB){
+            if (!firstSetProcessed) {
+                firstSetProcessed = true;
+                continue;
             }
+            // for (Formula element : set){
+            //     System.out.print(element.toString());
+            // }
+            set.add(new Formula(rankBuildAnts[i].toString(), new Atom(rankBuildAnts[i-1]).toString()));
+            System.out.println();
+            i++;
         }
-        System.out.println("]");
+
+        // System.out.print("Array: [");
+        // for (int j = 0; j < rankBuildAnts.length; j++) {
+        //     System.out.print(rankBuildAnts[j]);
+        //     if (i < rankBuildAnts.length - 1) {
+        //         System.out.print(", ");
+        //     }
+        // }
+        // System.out.println("]");
 
         return KB;
     }
 
     private static LinkedHashSet<Formula> generateRank(int rank, int[] formulaDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType, Atom rankBuildCons, Atom[] rankBuildAnts ){
-        // the while loop
 
         ArrayList<ArrayList<String>> choice = new ArrayList<>();
 
@@ -62,7 +78,6 @@ public class KBGeneratorThreaded{
             rankBuildAnts[rank] = rankBuildAnt;
         }
         
-
         //System.out.println("Rank: " + rank);
         ArrayList<Formula> formulas = new ArrayList<Formula>();
         ArrayList<Atom> curRankAtoms = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent.
@@ -80,7 +95,7 @@ public class KBGeneratorThreaded{
 
         curRankAtoms.add(rankBuildAnt);
         ArrayList<String> c = new ArrayList<>();
-        if(!(rank == 0 || rank == (formulaDistribution.length - 1))){ // Leaves 1 extra formula to be generated for each rank other than 1st and last.
+        if(!(rank == 0)){ // Leaves 1 extra formula to be generated for each rank other than 1st and last.
             formulaNum = formulaNum - 1;
         }
         while(formulaNum!=0){
