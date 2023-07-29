@@ -1,0 +1,11 @@
+100
+lg
+10000
+y
+y
+n
+upperlatin
+e
+n
+n
+q

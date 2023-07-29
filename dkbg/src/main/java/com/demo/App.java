@@ -12,8 +12,8 @@ import java.util.Scanner;
 // Program input is as follows:
 /* 
 * 1) No. of ranks [int]
-* 2) No. formulas [int]
-* 3) Distribution [options] // min 2 per rank, other than rank 0
+* 2) Distribution [options] // min 2 per rank, other than rank 0
+* 3) No. formulas [int]
 * 4) Simple only [y/n]
 * 5) Reuse Consequent [y/n]
 * 6) Antecedent complexity (if simple only then skip)  [0,1,2] choose any number

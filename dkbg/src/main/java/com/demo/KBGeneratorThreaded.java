@@ -24,18 +24,24 @@ public class KBGeneratorThreaded{
             for (int rank = 0; rank < formulaDistribution.length; rank++){
                 int r = rank;
                 Future<LinkedHashSet<Formula>> future = executor.submit(() -> generateRank(r, formulaDistribution, simpleOnly, complexityAnt, complexityCon, connectiveType, rankBuildCons, rankBuildAnts));
+                System.out.println("Run rank:" + rank);
                 futures.add(future);
             }
-
+            System.out.println("In Try");
             for (Future<LinkedHashSet<Formula>> future : futures){
+                System.out.println("In future getter");
                 KB.add(future.get());
             }
-        } catch (InterruptedException | ExecutionException e){
+        }
+        catch(InterruptedException | ExecutionException e){
+            System.out.println("In Catch");
             e.printStackTrace();
-        } finally{
+        }
+        finally{
+            System.out.println("In Finally");
             executor.shutdown();
         }
-
+        System.out.println("Out all");
         boolean firstSetProcessed = false;
         int i = 1;
         for(LinkedHashSet<Formula> set : KB){
@@ -60,7 +66,7 @@ public class KBGeneratorThreaded{
             rankBuildAnts[rank] = rankBuildAnt;
         }
         
-        System.out.println("Rank: " + rank);
+        //System.out.println("Rank: " + rank);
         ArrayList<Formula> formulas = new ArrayList<Formula>();
         ArrayList<Atom> curRankAtoms = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent.
         int formulaNum = formulaDistribution[rank];
@@ -133,7 +139,7 @@ public class KBGeneratorThreaded{
         choice.add(c);
         //System.out.println("rankBuildAnt: " + rankBuildAnt);
         //System.out.println("rankBuildCons: " + rankBuildCons);
-
+        System.out.println("Returning rank: " + rank);
         return new LinkedHashSet<>(formulas);
     }
 
