@@ -68,7 +68,7 @@ public class AtomBuilder{
                 sb.append(randomChar);
             }   
             atom.setAtom(sb.toString());
-        }while (atomList.contains(atom.toString())!=false);
+        }while(atomList.contains(atom.toString())!=false);
         atomCount++;
         atomList.add(atom.toString());
         return atom;

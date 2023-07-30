@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.*;
 
 // Program input is as follows:
 /* 
@@ -29,6 +30,8 @@ public class App
 {
     private static Connective con = Connective.getInstance();
     private static AtomBuilder gen = AtomBuilder.getInstance();
+    private static long startTime;
+    private static long endTime;
     private static int filenum = 1;
     static String choice;
 
@@ -213,22 +216,53 @@ public class App
                 System.out.print("> ");
                 String type = in.next(); // Knowledge base generation using only simple formulas
                 System.out.println("Generating Knowledge Base:");
-                LinkedHashSet<LinkedHashSet<Formula>> KB;
+                LinkedHashSet<LinkedHashSet<Formula>> KB = new LinkedHashSet<>();
+                boolean rerun = true;
                 if(type.equalsIgnoreCase("s")){
-                    long startTime = System.currentTimeMillis();
+                    startTime = System.currentTimeMillis();
                     KB = KBGenerator.KBGenerate(formulaDistribution, simple, reuseConsequent, complexityAnt, complexityCon, connectiveTypes);
-                    long endTime = System.currentTimeMillis();
+                    endTime = System.currentTimeMillis();
                     long executionTime = endTime - startTime;
                     System.out.println("Time taken for standard KB generation (in milliseconds): " + executionTime);
                 }
-                else{
-                    long startTime = System.currentTimeMillis();
-                    KB = KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes); // Always reuses the consequent.
-                    long endTime = System.currentTimeMillis();
-                    long executionTime = endTime - startTime;
-                    System.out.println("Time taken for threaded KB generation (in milliseconds): " + executionTime);
-                }
+                // else{
+                //     long startTime = System.currentTimeMillis();
+                //     KB = KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes); // Always reuses the consequent.
+                //     long endTime = System.currentTimeMillis();
+                //     long executionTime = endTime - startTime;
+                //     System.out.println("Time taken for threaded KB generation (in milliseconds): " + executionTime);
+                // }
 
+                else{
+                    do{
+                        ExecutorService executor = Executors.newSingleThreadExecutor();
+                        long timeoutDuration = 5000;
+                        try{
+                            Callable<LinkedHashSet<LinkedHashSet<Formula>>> kbGenerationTask = () -> {
+                                return KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes);
+                            };
+
+                            startTime = System.currentTimeMillis();
+                            Future<LinkedHashSet<LinkedHashSet<Formula>>> future = executor.submit(kbGenerationTask);
+                            KB = future.get(timeoutDuration, TimeUnit.MILLISECONDS);
+
+                            endTime = System.currentTimeMillis();
+                            long executionTime = endTime - startTime;
+                            System.out.println("Time taken for threaded KB generation (in milliseconds): " + executionTime);
+                            rerun = false;
+
+                        }catch(TimeoutException e){
+                            System.out.println("Timeout occurred during KB generation. Retrying...");
+                            executor.shutdownNow();
+                            gen.reset();
+                            rerun = true;
+                        }catch(InterruptedException | ExecutionException e){
+                            e.printStackTrace();
+                        }finally{
+                            executor.shutdownNow();
+                        }
+                    }while(rerun == true);
+                }
 
                 System.out.println("Save to text file? [y, n]:");
                 System.out.print("> ");

@@ -24,24 +24,25 @@ public class KBGeneratorThreaded{
             for (int rank = 0; rank < formulaDistribution.length; rank++){
                 int r = rank;
                 Future<LinkedHashSet<Formula>> future = executor.submit(() -> generateRank(r, formulaDistribution, simpleOnly, complexityAnt, complexityCon, connectiveType, rankBuildCons, rankBuildAnts));
-                System.out.println("Run rank:" + rank);
+                //System.out.println("Run rank:" + rank);
                 futures.add(future);
             }
-            System.out.println("In Try");
+
             for (Future<LinkedHashSet<Formula>> future : futures){
-                System.out.println("In future getter");
+                //System.out.println("In future getter");
                 KB.add(future.get());
             }
         }
         catch(InterruptedException | ExecutionException e){
-            System.out.println("In Catch");
+            //System.out.println("In Catch");
             e.printStackTrace();
         }
         finally{
-            System.out.println("In Finally");
+            //System.out.println("In Finally");
             executor.shutdown();
         }
-        System.out.println("Out all");
+        //System.out.println("Out all");
+
         boolean firstSetProcessed = false;
         int i = 1;
         for(LinkedHashSet<Formula> set : KB){
@@ -89,7 +90,7 @@ public class KBGeneratorThreaded{
         while(formulaNum!=0){
             //System.out.println("In while. formulaNum = " + formulaNum);
             if(simpleOnly == true){
-                int decision = random.nextInt(2); // Using this for now to pick between different rules to generate formulas.
+                int decision = random.nextInt(2);
                 // c.add(decision);
                 //System.out.println(decision);
                 int i = (int)(Math.random() * curRankAtoms.size()); // Get random atom from atoms usable in current rank.
@@ -139,7 +140,7 @@ public class KBGeneratorThreaded{
         choice.add(c);
         //System.out.println("rankBuildAnt: " + rankBuildAnt);
         //System.out.println("rankBuildCons: " + rankBuildCons);
-        System.out.println("Returning rank: " + rank);
+        //System.out.println("Returning rank: " + rank);
         return new LinkedHashSet<>(formulas);
     }
 

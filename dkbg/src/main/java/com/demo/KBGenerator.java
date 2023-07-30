@@ -44,8 +44,8 @@ public class KBGenerator{
             while(formulaNum!=0){
                 //System.out.println("In while. fiormulaNum = " + formulaNum);
                 if(simpleOnly == true){
-                    int decision = random.nextInt(3); // Using this for now to pick between different rules to generate formulas.
-                    // c.add(decision);
+                    int decision = random.nextInt(3);
+                    // c.add(decision);t
                     //System.out.println(decision);
                     int i = (int)(Math.random() * curRankAtoms.size()); // Get random atom from atoms usable in current rank.
                     //System.out.println("i= "+i+". curRankAtoms["+i+"]= "+curRankAtoms.get(i));
