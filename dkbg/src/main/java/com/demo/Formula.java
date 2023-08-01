@@ -39,10 +39,7 @@ public class Formula{
     public void setAntecedent(Object[] ant){
         StringBuilder antecedentBuilder = new StringBuilder();
         for(int i = 0; i < ant.length; i++){
-            if(ant[i] == null){
-                
-            }
-            else{
+            if(ant[i] != null){
                 antecedentBuilder.append(ant[i].toString());
             } 
         }
@@ -52,10 +49,7 @@ public class Formula{
     public void setConsequent(Object[] con){
         StringBuilder consequenBuilder = new StringBuilder();
         for(int i = 0; i < con.length; i++){
-            if(con[i] == null){
-                
-            }
-            else{
+            if(con[i] != null){
                 consequenBuilder.append(con[i].toString());
             } 
         }

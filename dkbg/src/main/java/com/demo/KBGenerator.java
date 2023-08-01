@@ -8,8 +8,6 @@ public class KBGenerator{
 
     public static LinkedHashSet<LinkedHashSet<Formula>> KBGenerate(int[] formulaDistribution, boolean simpleOnly, boolean reuseConsequent, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
 
-        ArrayList<ArrayList<String>> choice = new ArrayList<>();
-
         Random random = new Random();
         int rank = 0;
         LinkedHashSet<LinkedHashSet<Formula>> KB = new LinkedHashSet<LinkedHashSet<Formula>>(); // Creating KB.
@@ -18,7 +16,6 @@ public class KBGenerator{
         ArrayList<Atom> anyRankAtoms = new ArrayList<Atom>(); // Reusable atoms in any rank.
 
         while(rank!=formulaDistribution.length){
-            //System.out.println("Rank: " + rank);
             ArrayList<Formula> formulas = new ArrayList<Formula>();
             ArrayList<Atom> curRankAtoms = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent.
             ArrayList<Atom> anyRankAtomsTemp = new ArrayList<Atom>();
@@ -29,12 +26,10 @@ public class KBGenerator{
             }
             else{
                 if(reuseConsequent == false && formulaNum >=3){ // Don't reuse the original rankBuildCons in all ranks
-                    //System.out.println("In if ");
                     FormulaBuilder.rankBuilder(generator, formulas, rankBuildCons, rankBuildAnt);
                     formulaNum--;
                 }
                 else{ // Reuse the original rankBuildCons in all ranks
-                    //System.out.println("In else ");
                     FormulaBuilder.rankBuilderConstricted(generator, formulas, rankBuildCons, rankBuildAnt);
                 }
                 formulaNum = formulaNum - 2;
@@ -42,11 +37,8 @@ public class KBGenerator{
             curRankAtoms.add(rankBuildAnt);
             ArrayList<String> c = new ArrayList<>();
             while(formulaNum!=0){
-                //System.out.println("In while. fiormulaNum = " + formulaNum);
                 if(simpleOnly == true){
                     int decision = random.nextInt(3);
-                    // c.add(decision);t
-                    //System.out.println(decision);
                     int i = (int)(Math.random() * curRankAtoms.size()); // Get random atom from atoms usable in current rank.
                     //System.out.println("i= "+i+". curRankAtoms["+i+"]= "+curRankAtoms.get(i));
                     switch(decision){
@@ -79,11 +71,7 @@ public class KBGenerator{
                     }
                 }
                 else{
-                    //System.out.println(curRankAtoms.size());
-                    //System.out.println(curRankAtoms);
-                    //System.out.println("In while-else ");
                     String key = Rules.keyGenerator(connectiveType, complexityAnt, complexityCon, curRankAtoms.size());
-                    //System.out.println(key);
                     c.add(key);
                     int s = Integer.parseInt(key.substring(0, 1));
                     switch(s){
@@ -106,67 +94,11 @@ public class KBGenerator{
                     formulaNum--;
                 }
             }
-            choice.add(c);
             rankBuildCons.negateAtom(); // Negates the consequent for formation of next rank.
             KB.add(new LinkedHashSet<Formula>(formulas));
             anyRankAtoms.addAll(anyRankAtomsTemp);
-            //System.out.println("rankBuildAnt: " + rankBuildAnt);
-            //System.out.println("rankBuildCons: " + rankBuildCons);
             rank++;
         }
-        // for (ArrayList<String> row : choice){
-        //     for (String element : row){
-        //         System.out.print(element + " ");
-        //     }
-        //     System.out.println(); // New line for each row
-        // }
         return KB;
     }
-
-    // public static void main(String[] args){
-    //     Rules r = new Rules();
-        
-    //     con.setConjunctionSymbol("&");
-    //     con.setDisjunctionSymbol("||");
-    //     con.setImplicationSymbol("=>");
-    //     con.setBiImplicationSymbol("<=>");
-    //     con.setNegationSymbol("!");
-    //     generator.setCharacters("lowerlatin");
-
-    //     System.out.println("Knowledgebase:");
-    //     int[] a ={2,4,2,10,2,8,3};
-    //     int[] complexityAnt ={0,1,2};
-    //     int[] complexityCon ={0,1,2};
-    //     int[] connectiveType ={1,2,3,4,5};
-    //     LinkedHashSet<LinkedHashSet<Formula>> KB = KBGenerate(a, false, false, complexityAnt, complexityCon, connectiveType);
-    //     //System.out.println(KB);
-    //     //ArrayList b = new ArrayList();
-    //     int i = 0;
-    //     for (LinkedHashSet<Formula> set : KB){
-    //         System.out.print("Rank " + i + ": ");
-    //         Iterator<Formula> iterator = set.iterator();
-    //         while (iterator.hasNext()){
-    //             Formula element = iterator.next();
-    //             System.out.print(element.toString());
-                
-    //             // Print comma if there is a next element, otherwise print a newline
-    //             if (iterator.hasNext()){
-    //                 System.out.print(", ");
-    //             } else{
-    //                 System.out.println();
-    //             }
-    //         }
-    //         i++;
-    //     }
-
-    //     for(LinkedHashSet<Formula> set : KB){
-    //         for (Formula element : set){
-    //             System.out.println(element.toString());
-    //         }
-    //     }
-
-    //     // for(int i=0; i<b.size(); i++){
-    //     //     System.out.println(b.get(i));
-    //     // }
-    // }
 }

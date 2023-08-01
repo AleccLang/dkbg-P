@@ -106,8 +106,7 @@ public class Distribution{
             remainingFormulas--;
         }
     }
-    
-    
+     
     // Minimum formulas needed for a linear increase distribution
     public static int minFormulasLinear(int numRanks){
         int sum = numRanks * (numRanks + 1) / 2;
@@ -124,23 +123,4 @@ public class Distribution{
         }
         return sum;
     }
-    
-
-    // public static void main(String[] args){
-    //     Distribution distribution = new Distribution();
-    //     int numFormulas = 11;
-    //     int numRanks = 6;
-    //     String distributionType = "r";
-    //     int[] ranks = distribution.distributeFormulas(numFormulas, numRanks, distributionType);
-
-    //     System.out.println("Distribution of Formulas in Ranks:");
-    //     for (int i = 0; i < numRanks; i++){
-    //         System.out.println("Rank " + i + ": " + ranks[i] + " formulas");
-    //     }
-
-    //     System.out.println("/////////");
-
-    //     int a = minFormulasLinear(numRanks);
-    //     System.out.println("Minimum number of formulas for " + numRanks + " ranks: " + a);
-    // }
 }

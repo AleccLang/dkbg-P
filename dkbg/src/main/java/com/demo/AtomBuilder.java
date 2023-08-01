@@ -96,20 +96,4 @@ public class AtomBuilder{
                 break;
         }
     }
-
-    // public static void main(String[] args){
-        
-    //     AtomBuilder generator = new AtomBuilder();
-
-    //     for (int i = 0; i < 100; i++){
-    //         Atom atom = generator.generateAtom();
-    //         System.out.println("Atom: " + atom.toString());
-    //     }
-    //     generator.reset();
-    //     System.out.println("////////////////////////////////////");
-    //     for (int i = 0; i < 100; i++){
-    //         Atom atom = generator.generateAtom();
-    //         System.out.println("Atom: " + atom.toString());
-    //     }
-    // }
 }

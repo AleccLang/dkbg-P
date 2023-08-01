@@ -68,9 +68,6 @@ public class Rules{
                 return (curRankAtomNum>=curRankAtomMin) ? key : key.substring(0,4)+ "0";
             }
         }
-        // int curRankAtomMin = Integer.parseInt(temp.substring(0,1));
-        // int anyRankAtomMin = Integer.parseInt(temp.substring(2,3));
-        // return (curRankAtomNum>=curRankAtomMin && anyRankAtomNum>=anyRankAtomMin) ? key : "1,0,0"; // Return key or generate simple statement.
     }
 
     // Generates a statement key.
@@ -79,27 +76,6 @@ public class Rules{
         int j = (int)(Math.random() * complexityAnt.length); // Get random connectionType from those available.
         int z; do{ z = (int)(Math.random() * complexityCon.length);} while ((complexityCon[z] == 0 && complexityAnt[j] == 0)); // Get random connectionType from those available (z & j can't both be 0).
         String key = connectionType[i] + "," + complexityAnt[j] + "," + complexityCon[z];
-        //System.out.println("keyGenerator key: " + key);
         return checker(key, curRankAtomNum);
     }
-
-    // public static void main(String[] args){
-    //     Rules r = new Rules();
-    //     int[] connectionType = {1,2};
-    //     int[] complexityAnt = {0,1,2};
-    //     int[] complexityCon = {0,1,2};
-    //     int curRankAtomNum = 3;
-    //     for(int i = 0; i < 150; i++){
-    //         System.out.println(Rules.keyGenerator(connectionType, complexityAnt, complexityCon, curRankAtomNum));
-    //     }
-
-    //     List<Integer> complexityAntList = new ArrayList<>();
-    //     complexityAntList.add(1);
-    //     complexityAntList.add(3);
-    //     int[] complexityAnt1 = new int[complexityAntList.size()];
-    //     for (int i = 0; i < complexityAntList.size(); i++) {
-    //         complexityAnt1[i] = complexityAntList.get(i);
-    //     }
-    //     System.out.println(Arrays.toString(complexityAnt1));
-    // }
 }

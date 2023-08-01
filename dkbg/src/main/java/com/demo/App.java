@@ -67,7 +67,7 @@ public class App
             int min = minFormulas(distribution, numRanks);
             System.out.println("Enter the number of formulas in the KB (Must be greater than or equal to " + min + "):");
             System.out.print("> ");
-            int numFormulas = in.nextInt(); // Number of formulas in the knowledgebase
+            int numFormulas = in.nextInt(); // Number of formulas in the knowledge base
             while (!(numFormulas >= min)){
                 System.out.println("Enter a valid number of formulas in the KB (Must be greater than or equal to " + min + "):");
                 System.out.print("> ");
@@ -96,7 +96,7 @@ public class App
                 for (int i = 0; i < antStrings.length; i++){
                     int temp = Integer.parseInt(antStrings[i].trim());
                     if (temp != 0 && temp != 1 && temp != 2){
-                        // Skip invalid numbers5
+                        // Skip invalid numbers
                     }
                     else{
                         complexityAntList.add(temp);
@@ -112,7 +112,7 @@ public class App
                 for (int i = 0; i < conStrings.length; i++){
                     int temp = Integer.parseInt(conStrings[i].trim());
                     if (temp != 0 && temp != 1 && temp != 2){
-                        // Skip invalid numbers5
+                        // Skip invalid numbers
                     }
                     else{
                         complexityConList.add(temp);
@@ -129,7 +129,7 @@ public class App
                 for (int i = 0; i < connectiveStrings.length; i++){
                     int temp = Integer.parseInt(connectiveStrings[i].trim());
                     if (temp != 1 && temp != 2 && temp != 3 && temp != 4 && temp != 5){
-                        // Skip invalid numbers5
+                        // Skip invalid numbers
                     }
                     else{
                         connectiveList.add(temp);
@@ -188,7 +188,6 @@ public class App
             }
             gen.setCharacters(characterSet);
 
-            // Terminal clear
             do{
                 int[] complexityAnt = new int[complexityAntList.size()];
                 for (int i = 0; i < complexityAntList.size(); i++){
@@ -205,13 +204,6 @@ public class App
                         connectiveTypes[i] = connectiveList.get(i);
                 }
 
-
-                // System.out.println("formulaDistribution:" + Arrays.toString(formulaDistribution));
-                // System.out.println("simple:" + simple);
-                // System.out.println("reuseConsequent:" + reuseConsequent);
-                // System.out.println("complexityAnt:" + Arrays.toString(complexityAnt));
-                // System.out.println("complexityCon:" + Arrays.toString(complexityCon));
-                // System.out.println("connectiveTypes:" + Arrays.toString(connectiveTypes));
                 System.out.println("Generator type? [s (standard), e (efficient)]:");
                 System.out.print("> ");
                 String type = in.next(); // Knowledge base generation using only simple formulas
@@ -225,14 +217,6 @@ public class App
                     long executionTime = endTime - startTime;
                     System.out.println("Time taken for standard KB generation (in milliseconds): " + executionTime);
                 }
-                // else{
-                //     long startTime = System.currentTimeMillis();
-                //     KB = KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes); // Always reuses the consequent.
-                //     long endTime = System.currentTimeMillis();
-                //     long executionTime = endTime - startTime;
-                //     System.out.println("Time taken for threaded KB generation (in milliseconds): " + executionTime);
-                // }
-
                 else{
                     do{
                         ExecutorService executor = Executors.newSingleThreadExecutor();
