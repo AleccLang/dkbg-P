@@ -220,7 +220,7 @@ public class App
                 else{
                     do{
                         ExecutorService executor = Executors.newSingleThreadExecutor();
-                        long timeoutDuration = 5000;
+                        long timeoutDuration = 1000;
                         try{
                             Callable<LinkedHashSet<LinkedHashSet<Formula>>> kbGenerationTask = () -> {
                                 return KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes);
@@ -241,7 +241,7 @@ public class App
                             gen.reset();
                             rerun = true;
                         }catch(InterruptedException | ExecutionException e){
-                            e.printStackTrace();
+                            //e.printStackTrace();
                         }finally{
                             executor.shutdownNow();
                         }
