@@ -26,6 +26,15 @@ public class Connective{
         return instance;
     }
 
+    public void reset(){
+        defeasibleImplicationSymbol = "~>";
+        conjunctionSymbol = "&"; // ∧
+        disjunctionSymbol = "||"; // ∨
+        implicationSymbol = "=>"; // ⇒
+        biImplicationSymbol = "<=>"; // ⇔
+        negationSymbol = "!"; //¬
+    }
+
     // Gets a random connective from the connectives provided.
     public static String getRandom(int[] conArr, Connective con){ 
         String connective = "";

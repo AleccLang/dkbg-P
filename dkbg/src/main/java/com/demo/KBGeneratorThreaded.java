@@ -2,7 +2,7 @@ package com.demo;
 
 import java.util.*;
 import java.util.concurrent.*;
-// rankBuildAnt is always reused, 1 formula is generated first for each rank, no matter the rank
+// rankBuildAnt is always reused, 1 defImplication is generated first for each rank, no matter the rank
 // No use of anyRankAtoms
 // At the end it must generate 1 statement for each rank to tie them all together.
 public class KBGeneratorThreaded{
@@ -12,22 +12,22 @@ public class KBGeneratorThreaded{
     
 
 
-    public static LinkedHashSet<LinkedHashSet<Formula>> KBGenerate(int[] formulaDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
+    public static LinkedHashSet<LinkedHashSet<DefImplication>> KBGenerate(int[] defImplicationDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-        LinkedHashSet<LinkedHashSet<Formula>> KB = new LinkedHashSet<LinkedHashSet<Formula>>();
+        LinkedHashSet<LinkedHashSet<DefImplication>> KB = new LinkedHashSet<LinkedHashSet<DefImplication>>();
         Atom rankBuildCons = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
-        Atom[] rankBuildAnts = new Atom[formulaDistribution.length]; // Stores each ranks rankBuildAnt to tie the ranks together.
+        Atom[] rankBuildAnts = new Atom[defImplicationDistribution.length]; // Stores each ranks rankBuildAnt to tie the ranks together.
 
         try{
-            ArrayList<Future<LinkedHashSet<Formula>>> futures = new ArrayList<>();
+            ArrayList<Future<LinkedHashSet<DefImplication>>> futures = new ArrayList<>();
 
-            for (int rank = 0; rank < formulaDistribution.length; rank++){
+            for (int rank = 0; rank < defImplicationDistribution.length; rank++){
                 int r = rank;
-                Future<LinkedHashSet<Formula>> future = executor.submit(() -> generateRank(r, formulaDistribution, simpleOnly, complexityAnt, complexityCon, connectiveType, rankBuildCons, rankBuildAnts));
+                Future<LinkedHashSet<DefImplication>> future = executor.submit(() -> generateRank(r, defImplicationDistribution, simpleOnly, complexityAnt, complexityCon, connectiveType, rankBuildCons, rankBuildAnts));
                 futures.add(future);
             }
 
-            for (Future<LinkedHashSet<Formula>> future : futures){
+            for (Future<LinkedHashSet<DefImplication>> future : futures){
                 KB.add(future.get());
             }
         }
@@ -40,18 +40,18 @@ public class KBGeneratorThreaded{
 
         boolean firstSetProcessed = false;
         int i = 1;
-        for(LinkedHashSet<Formula> set : KB){
+        for(LinkedHashSet<DefImplication> set : KB){
             if (!firstSetProcessed) {
                 firstSetProcessed = true;
                 continue;
             }
-            set.add(new Formula(rankBuildAnts[i].toString(), new Atom(rankBuildAnts[i-1]).toString()));
+            set.add(new DefImplication(rankBuildAnts[i].toString(), new Atom(rankBuildAnts[i-1]).toString()));
             i++;
         }
         return KB;
     }
 
-    private static LinkedHashSet<Formula> generateRank(int rank, int[] formulaDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType, Atom rankBuildCons, Atom[] rankBuildAnts){
+    private static LinkedHashSet<DefImplication> generateRank(int rank, int[] defImplicationDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType, Atom rankBuildCons, Atom[] rankBuildAnts){
 
         Random random = new Random();
         Atom rankBuildAnt = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
@@ -60,39 +60,39 @@ public class KBGeneratorThreaded{
             rankBuildAnts[rank] = rankBuildAnt;
         }
         
-        ArrayList<Formula> formulas = new ArrayList<Formula>();
+        ArrayList<DefImplication> defImplications = new ArrayList<DefImplication>();
         ArrayList<Atom> curRankAtoms = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent.
-        int formulaNum = formulaDistribution[rank];
-        // rankBuildAnt is always reused, 1 formula is generated first for each rank, no matter the rank
-        formulaNum--;
+        int defImplicationNum = defImplicationDistribution[rank];
+        // rankBuildAnt is always reused, 1 defImplication is generated first for each rank, no matter the rank
+        defImplicationNum--;
         if(rank % 2 == 0){
-            FormulaBuilder.rankZero(formulas, rankBuildCons, rankBuildAnt);
+            DefImplicationBuilder.rankZero(defImplications, rankBuildCons, rankBuildAnt);
         }
         else{
             Atom rBCNegated = new Atom(rankBuildCons);
             rBCNegated.negateAtom();
-            FormulaBuilder.rankZero(formulas, rBCNegated, rankBuildAnt);
+            DefImplicationBuilder.rankZero(defImplications, rBCNegated, rankBuildAnt);
         }
 
         curRankAtoms.add(rankBuildAnt);
-        if(!(rank == 0)){ // Leaves 1 extra formula to be generated for each rank other than 1st and last.
-            formulaNum = formulaNum - 1;
+        if(!(rank == 0)){ // Leaves 1 extra defImplication to be generated for each rank other than 1st and last.
+            defImplicationNum = defImplicationNum - 1;
         }
-        while(formulaNum!=0){
+        while(defImplicationNum!=0){
             if(simpleOnly == true){
                 int decision = random.nextInt(2);
                 int i = (int)(Math.random() * curRankAtoms.size()); // Get random atom from atoms usable in current rank.
                 switch(decision){
                     case 0: 
-                        // Adds formula with a new atom as antecedent and random curRankAtom as consequent.
-                        Atom[] temp = FormulaBuilder.recycleAntecedent(generator, formulas, curRankAtoms.get(i));
+                        // Adds defImplication with a new atom as antecedent and random curRankAtom as consequent.
+                        Atom[] temp = DefImplicationBuilder.recycleAntecedent(generator, defImplications, curRankAtoms.get(i));
                         curRankAtoms.add(temp[0]);
-                        formulaNum--;
+                        defImplicationNum--;
                         break;
                     case 1:
-                        // Adds formula with negated atom as antecedent and random curRankAtom as consequent.
-                        temp = FormulaBuilder.negateAntecedent(generator, formulas, curRankAtoms.get(i));
-                        formulaNum--;
+                        // Adds defImplication with negated atom as antecedent and random curRankAtom as consequent.
+                        temp = DefImplicationBuilder.negateAntecedent(generator, defImplications, curRankAtoms.get(i));
+                        defImplicationNum--;
                         break;
                 }
             }
@@ -101,24 +101,24 @@ public class KBGeneratorThreaded{
                 int s = Integer.parseInt(key.substring(0, 1));
                 switch(s){
                     case 1:
-                        FormulaBuilder.disjunctionFormula(key, generator, formulas, curRankAtoms);
+                        DefImplicationBuilder.disjunctionDefImplication(key, generator, defImplications, curRankAtoms);
                         break;
                     case 2:
-                        FormulaBuilder.conjunctionFormula(key, generator, formulas, curRankAtoms);
+                        DefImplicationBuilder.conjunctionDefImplication(key, generator, defImplications, curRankAtoms);
                         break;
                     case 3:
-                        FormulaBuilder.implicationFormula(key, generator, formulas, curRankAtoms);
+                        DefImplicationBuilder.implicationDefImplication(key, generator, defImplications, curRankAtoms);
                         break;
                     case 4:
-                        FormulaBuilder.biImplicationFormula(key, generator, formulas, curRankAtoms);
+                        DefImplicationBuilder.biImplicationDefImplication(key, generator, defImplications, curRankAtoms);
                         break;
                     case 5:
-                        FormulaBuilder.mixedFormula(key, generator, formulas, curRankAtoms);
+                        DefImplicationBuilder.mixedDefImplication(key, generator, defImplications, curRankAtoms);
                         break;
                 }
-                formulaNum--;
+                defImplicationNum--;
             }
         }
-        return new LinkedHashSet<>(formulas);
+        return new LinkedHashSet<>(defImplications);
     }
 }

@@ -1,21 +1,21 @@
 package com.demo;
 
-public class Formula{
+public class DefImplication{
 
     private static Connective con = Connective.getInstance();
 
     String antecedent;
     String consequent;
 
-    public Formula(String ant, String cons){
+    public DefImplication(String ant, String cons){
         this.antecedent = ant;
         this.consequent = cons;
     }
 
-    public static boolean checkConsequent(Formula formula, Atom atom){ // Checks if an atom is included in the formulas consequent.
+    public static boolean checkConsequent(DefImplication defImplication, Atom atom){ // Checks if an atom is included in the defImplications consequent.
         boolean val;
-        String[] formulaSplit = formula.toString().split(con.getDefImplicationSymbol(), 2);
-        if(formulaSplit[1].contains(atom.toString())){
+        String[] defImplicationSplit = defImplication.toString().split(con.getDefImplicationSymbol(), 2);
+        if(defImplicationSplit[1].contains(atom.toString())){
             val = true;
         }
         else{
@@ -24,10 +24,10 @@ public class Formula{
         return val;
     }
 
-    public static boolean checkAntecedent(Formula formula, Atom atom){ // Checks if an atom is included in the formulas antecedent.
+    public static boolean checkAntecedent(DefImplication defImplication, Atom atom){ // Checks if an atom is included in the defImplications antecedent.
         boolean val;
-        String[] formulaSplit = formula.toString().split(con.getDefImplicationSymbol(), 2);
-        if(formulaSplit[0].contains(atom.toString())){
+        String[] defImplicationSplit = defImplication.toString().split(con.getDefImplicationSymbol(), 2);
+        if(defImplicationSplit[0].contains(atom.toString())){
             val = true;
         }
         else{
@@ -56,11 +56,11 @@ public class Formula{
         antecedent = consequenBuilder.toString();
     }
 
-    public String getAntecedent(){ // Gets the formulas antecedent
+    public String getAntecedent(){ // Gets the defImplications antecedent
         return antecedent;
     }
 
-    public String getConsequent(){ // Gets the formulas consequent
+    public String getConsequent(){ // Gets the defImplications consequent
         return consequent;
     }
 

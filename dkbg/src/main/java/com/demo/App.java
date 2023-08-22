@@ -14,7 +14,7 @@ import java.util.concurrent.*;
 /* 
 * 1) No. of ranks [int]
 * 2) Distribution [options] // min 2 per rank, other than rank 0
-* 3) No. formulas [int]
+* 3) No. defImplications [int]
 * 4) Simple only [y/n]
 * 5) Reuse Consequent [y/n]
 * 6) Antecedent complexity (if simple only then skip)  [0,1,2] choose any number
@@ -40,10 +40,11 @@ public class App
         Scanner in = new Scanner(System.in);
 
         do{
+            con.reset();
             System.out.println( "Defeasible Knowledge Base Generator:");
-            List<Integer> complexityAntList = new ArrayList<>(); // Number of possible connectives in a formulas antecedent
-            List<Integer> complexityConList = new ArrayList<>(); // Number of possible connectives in a formulas consequent
-            List<Integer> connectiveList = new ArrayList<>(); // Number of different connectives a formula can have
+            List<Integer> complexityAntList = new ArrayList<>(); // Number of possible connectives in a defImplications antecedent
+            List<Integer> complexityConList = new ArrayList<>(); // Number of possible connectives in a defImplications consequent
+            List<Integer> connectiveList = new ArrayList<>(); // Number of different connectives a defImplication can have
 
             System.out.println("Enter the number of ranks in the KB:");
             System.out.print("> ");
@@ -54,31 +55,31 @@ public class App
                 numRanks = in.nextInt();
             }
 
-            // Maybe have distribution first, because the number of formulas are dependent on the distribution and the number of ranks.
-            System.out.println("Enter the formula distribution [f (flat), lg (linear-growth), ld (linear-decline), r (random)]:");
+            // Maybe have distribution first, because the number of defImplications are dependent on the distribution and the number of ranks.
+            System.out.println("Enter the defImplication distribution [f (flat), lg (linear-growth), ld (linear-decline), r (random)]:");
             System.out.print("> ");
-            String distribution = in.next(); // Distribution of the formulas in the knowledge base
+            String distribution = in.next(); // Distribution of the defImplications in the knowledge base
             while (!validDistribution(distribution)){
-                System.out.println("Enter valid formula distribution [f (flat), lg (linear-growth), ld (linear-decline), r (random)]:");
+                System.out.println("Enter valid defImplication distribution [f (flat), lg (linear-growth), ld (linear-decline), r (random)]:");
                 System.out.print("> ");
                 distribution = in.next();
             }
 
-            int min = minFormulas(distribution, numRanks);
-            System.out.println("Enter the number of formulas in the KB (Must be greater than or equal to " + min + "):");
+            int min = minDefImplications(distribution, numRanks);
+            System.out.println("Enter the number of defImplications in the KB (Must be greater than or equal to " + min + "):");
             System.out.print("> ");
-            int numFormulas = in.nextInt(); // Number of formulas in the knowledge base
-            while (!(numFormulas >= min)){
-                System.out.println("Enter a valid number of formulas in the KB (Must be greater than or equal to " + min + "):");
+            int numDefImplications = in.nextInt(); // Number of defImplications in the knowledge base
+            while (!(numDefImplications >= min)){
+                System.out.println("Enter a valid number of defImplications in the KB (Must be greater than or equal to " + min + "):");
                 System.out.print("> ");
-                numFormulas = in.nextInt();
+                numDefImplications = in.nextInt();
             }
 
-            int[] formulaDistribution = Distribution.distributeFormulas(numFormulas, numRanks, distribution);
+            int[] defImplicationDistribution = Distribution.distributeDefImplications(numDefImplications, numRanks, distribution);
 
-            System.out.println("Simple formulas only? [y, n]:");
+            System.out.println("Simple defImplications only? [y, n]:");
             System.out.print("> ");
-            String smple = in.next(); // Knowledge base generation using only simple formulas
+            String smple = in.next(); // Knowledge base generation using only simple defImplications
             boolean simple = (smple.equalsIgnoreCase("y")) ? true : false;
 
             System.out.println("Reuse Consequent? [y, n]:");
@@ -139,40 +140,45 @@ public class App
 
             System.out.println("Would you like to change connective symbols? [y, n]");
             System.out.print("> ");
-            String chnge = in.next(); // Change the connective symbols used in the formulas
+            String chnge = in.next(); // Change the connective symbols used in the defImplications
             boolean change = (chnge.equalsIgnoreCase("y")) ? true : false;
             if(change == true){
                 System.out.println("Default Defeasible Implication symbol: ~> ['s' to skip]");
                 System.out.print("> ");
                 String defImp = in.next();
-                System.out.println(defImp);
-                if(!defImp.equals("s")){con.setDefImplicationSymbol(defImp);} // Sets defeasible implication symbol
+                boolean chng = (defImp.equalsIgnoreCase("s")) ? true : false;
+                if(chng == false){con.setDefImplicationSymbol(defImp);} // Sets defeasible implication symbol
                 
                 if(simple == false){
                     System.out.println("Default Conjunction symbol: & ['s' to skip]");
                     System.out.print("> ");
                     String conj = in.next();
-                    if(!conj.equals("s")){con.setConjunctionSymbol(conj);} // Sets conjunction symbol
+                    chng = (conj.equalsIgnoreCase("s")) ? true : false;
+                    if(chng == false){con.setConjunctionSymbol(conj);} // Sets conjunction symbol
 
                     System.out.println("Default Disjunction symbol: || ['s' to skip]");
                     System.out.print("> ");
                     String disj = in.next();
-                    if(!conj.equals("s")){con.setDisjunctionSymbol(disj);}  // Sets disjunction symbol
+                    chng = (disj.equalsIgnoreCase("s")) ? true : false;
+                    if(chng == false){con.setDisjunctionSymbol(disj);}  // Sets disjunction symbol
 
                     System.out.println("Default Implication symbol: => ['s' to skip]");
                     System.out.print("> ");
                     String imp = in.next();
-                    if(!conj.equals("s")){con.setImplicationSymbol(imp);}  // Sets implication symbol
+                    chng = (imp.equalsIgnoreCase("s")) ? true : false;
+                    if(chng == false){con.setImplicationSymbol(imp);}  // Sets implication symbol
 
                     System.out.println("Default Bi-Implication symbol: <=> ['s' to skip]");
                     System.out.print("> ");
                     String biimp = in.next();
-                    if(!conj.equals("s")){con.setBiImplicationSymbol(biimp);}  // Sets bi-implication symbol
+                    chng = (biimp.equalsIgnoreCase("s")) ? true : false;
+                    if(chng == false){con.setBiImplicationSymbol(biimp);}  // Sets bi-implication symbol
 
                     System.out.println("Default Negation symbol: ! ['s' to skip]");
                     System.out.print("> ");
                     String negation = in.next();
-                    if(!conj.equals("s")){con.setNegationSymbol(negation);}  // Sets negation symbol
+                    chng = (negation.equalsIgnoreCase("s")) ? true : false;
+                    if(chng == false){con.setNegationSymbol(negation);}  // Sets negation symbol
                 }
             }
             
@@ -206,13 +212,13 @@ public class App
 
                 System.out.println("Generator type? [s (standard), e (efficient)]:");
                 System.out.print("> ");
-                String type = in.next(); // Knowledge base generation using only simple formulas
+                String type = in.next(); // Knowledge base generation using only simple defImplications
                 System.out.println("Generating Knowledge Base:");
-                LinkedHashSet<LinkedHashSet<Formula>> KB = new LinkedHashSet<>();
+                LinkedHashSet<LinkedHashSet<DefImplication>> KB = new LinkedHashSet<>();
                 boolean rerun = true;
                 if(type.equalsIgnoreCase("s")){
                     startTime = System.currentTimeMillis();
-                    KB = KBGenerator.KBGenerate(formulaDistribution, simple, reuseConsequent, complexityAnt, complexityCon, connectiveTypes);
+                    KB = KBGenerator.KBGenerate(defImplicationDistribution, simple, reuseConsequent, complexityAnt, complexityCon, connectiveTypes);
                     endTime = System.currentTimeMillis();
                     long executionTime = endTime - startTime;
                     System.out.println("Time taken for standard KB generation (in milliseconds): " + executionTime);
@@ -222,12 +228,12 @@ public class App
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         long timeoutDuration = 1000;
                         try{
-                            Callable<LinkedHashSet<LinkedHashSet<Formula>>> kbGenerationTask = () -> {
-                                return KBGeneratorThreaded.KBGenerate(formulaDistribution, simple, complexityAnt, complexityCon, connectiveTypes);
+                            Callable<LinkedHashSet<LinkedHashSet<DefImplication>>> kbGenerationTask = () -> {
+                                return KBGeneratorThreaded.KBGenerate(defImplicationDistribution, simple, complexityAnt, complexityCon, connectiveTypes);
                             };
 
                             startTime = System.currentTimeMillis();
-                            Future<LinkedHashSet<LinkedHashSet<Formula>>> future = executor.submit(kbGenerationTask);
+                            Future<LinkedHashSet<LinkedHashSet<DefImplication>>> future = executor.submit(kbGenerationTask);
                             KB = future.get(timeoutDuration, TimeUnit.MILLISECONDS);
 
                             endTime = System.currentTimeMillis();
@@ -261,11 +267,11 @@ public class App
                 if(print.equalsIgnoreCase("y")){
                     System.out.println("Knowledge base:");
                     int i = 0;
-                    for (LinkedHashSet<Formula> set : KB){
+                    for (LinkedHashSet<DefImplication> set : KB){
                         System.out.print("Rank " + i + ": ");
-                        Iterator<Formula> iterator = set.iterator();
+                        Iterator<DefImplication> iterator = set.iterator();
                         while (iterator.hasNext()){
-                            Formula element = iterator.next();
+                            DefImplication element = iterator.next();
                             System.out.print(element.toString());
                             
                             if(iterator.hasNext()){
@@ -302,17 +308,17 @@ public class App
                input.equalsIgnoreCase("altlatin") || input.equalsIgnoreCase("greek");
     }
 
-    private static int minFormulas(String distribution, int numRanks){
+    private static int minDefImplications(String distribution, int numRanks){
         int min = 0;
         switch(distribution){
             case "f":
                 min = (numRanks*2)-1;
                 break;
             case "lg":
-                min = Distribution.minFormulasLinear(numRanks);
+                min = Distribution.minDefImplicationsLinear(numRanks);
                 break;
             case "ld":
-                min = Distribution.minFormulasLinearDecline(numRanks);
+                min = Distribution.minDefImplicationsLinearDecline(numRanks);
                 break;
             case "r":
                 min = (numRanks*2);
@@ -321,15 +327,15 @@ public class App
         return min;
     }
 
-    private static void kbToFile(LinkedHashSet<LinkedHashSet<Formula>> KB){
+    private static void kbToFile(LinkedHashSet<LinkedHashSet<DefImplication>> KB){
         String filePath = "output" + filenum + ".txt"; // Specify the file path
         filenum++;
         try{
             File file = new File(filePath);
             FileWriter fw = new FileWriter(file);
 
-            for(LinkedHashSet<Formula> set : KB){
-                for (Formula element : set){
+            for(LinkedHashSet<DefImplication> set : KB){
+                for (DefImplication element : set){
                     fw.write(element.toString() + "\n");
                 }
             }

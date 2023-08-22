@@ -3,59 +3,59 @@ package com.demo;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class FormulaBuilder{
+public class DefImplicationBuilder{
 
     private static Connective con = Connective.getInstance();
 
-    // Generates the minimum formulas and structure needed for a rank.
-    public static void rankZero(ArrayList<Formula> formulas, Atom rankBuildCons, Atom rankBuildAnt){
-        formulas.add(new Formula(rankBuildAnt.toString(), new Atom(rankBuildCons).toString())); //
+    // Generates the minimum defImplications and structure needed for a rank.
+    public static void rankZero(ArrayList<DefImplication> defImplications, Atom rankBuildCons, Atom rankBuildAnt){
+        defImplications.add(new DefImplication(rankBuildAnt.toString(), new Atom(rankBuildCons).toString())); //
     }
 
-    // Baseline formulas and structure needed for a rank in a KB.
-    public static void rankBuilderConstricted(AtomBuilder gen, ArrayList<Formula> formulas, Atom rankBuildCons, Atom rankBuildAnt){
+    // Baseline defImplications and structure needed for a rank in a KB.
+    public static void rankBuilderConstricted(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBuildCons, Atom rankBuildAnt){
         Atom atom = gen.generateAtom();
-        formulas.add(new Formula(atom.toString(), new Atom(rankBuildCons).toString())); // 
-        formulas.add(new Formula(atom.toString(), rankBuildAnt.toString())); 
+        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBuildCons).toString())); // 
+        defImplications.add(new DefImplication(atom.toString(), rankBuildAnt.toString())); 
         rankBuildAnt.setAtom(atom.toString());
     }
 
-    // Generates baseline formulas and structure with a new consequent for next rank in a KB.
-    public static void rankBuilder(AtomBuilder gen, ArrayList<Formula> formulas, Atom rankBuildCons, Atom rankBuildAnt){
+    // Generates baseline defImplications and structure with a new consequent for next rank in a KB.
+    public static void rankBuilder(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBuildCons, Atom rankBuildAnt){
         Atom newRankBaseCons = gen.generateAtom(); // Atom acts as the rankBuildCons in the next rank.
         Atom atom = gen.generateAtom();
-        formulas.add(new Formula(atom.toString(), new Atom(rankBuildCons).toString())); // 
-        formulas.add(new Formula(atom.toString(), new Atom(newRankBaseCons).toString()));
-        formulas.add(new Formula(atom.toString(), rankBuildAnt.toString()));
+        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBuildCons).toString())); // 
+        defImplications.add(new DefImplication(atom.toString(), new Atom(newRankBaseCons).toString()));
+        defImplications.add(new DefImplication(atom.toString(), rankBuildAnt.toString()));
         rankBuildCons.setAtom(newRankBaseCons.toString());
         rankBuildAnt.setAtom(atom.toString());
     }
 
-    // Method to generate simple formulas by using a atom as antecedent and reusing the rankBuildAnt as consequent.
-    public static Atom[] recycleAntecedent(AtomBuilder gen, ArrayList<Formula> formulas, Atom rankBuildAnt){ // Generates new consequent for next rank in an unrestriced KB.
+    // Method to generate simple defImplications by using a atom as antecedent and reusing the rankBuildAnt as consequent.
+    public static Atom[] recycleAntecedent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBuildAnt){ // Generates new consequent for next rank in an unrestriced KB.
         Atom atom = gen.generateAtom();
         Atom[] atoms = {atom};
-        formulas.add(new Formula(atom.toString(), rankBuildAnt.toString())); 
+        defImplications.add(new DefImplication(atom.toString(), rankBuildAnt.toString())); 
         return atoms;
     }
 
-    // Method to generate simple formulas by using a new negated atom as antecedent and a currRankAtom as consequent.
-    public static Atom[] negateAntecedent(AtomBuilder gen, ArrayList<Formula> formulas, Atom currRankAtom){ // Generates new consequent for next rank in an unrestriced KB.
+    // Method to generate simple defImplications by using a new negated atom as antecedent and a currRankAtom as consequent.
+    public static Atom[] negateAntecedent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom currRankAtom){ // Generates new consequent for next rank in an unrestriced KB.
         Atom atom = gen.generateAtom();
         atom.negateAtom();
         Atom[] atoms = {atom};
-        formulas.add(new Formula(new Atom(atom).toString(), currRankAtom.toString())); 
+        defImplications.add(new DefImplication(new Atom(atom).toString(), currRankAtom.toString())); 
         return atoms;
     }
 
-    // Method to generate simple formulas by using a currRankAtom as antecedent and a negated anyRankAtom as consequent.
-    public static void reuseConsequent(AtomBuilder gen, ArrayList<Formula> formulas, Atom anyRankAtom, Atom currRankAtom){ // Generates new consequent for next rank in an unrestriced KB.
+    // Method to generate simple defImplications by using a currRankAtom as antecedent and a negated anyRankAtom as consequent.
+    public static void reuseConsequent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom anyRankAtom, Atom currRankAtom){ // Generates new consequent for next rank in an unrestriced KB.
         anyRankAtom.negateAtom();
-        formulas.add(new Formula(currRankAtom.toString(), new Atom(anyRankAtom).toString()));
+        defImplications.add(new DefImplication(currRankAtom.toString(), new Atom(anyRankAtom).toString()));
     }
 
-    // Method to generate complex formulas using the disjunction connective.
-    public static void disjunctionFormula(String key, AtomBuilder gen, ArrayList<Formula> formulas, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex defImplications using the disjunction connective.
+    public static void disjunctionDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String disjunction = con.getDisjunctionSymbol();
         String antecedent = "";
@@ -92,11 +92,11 @@ public class FormulaBuilder{
                 consequent = curRankAtoms.get(0).toString() + disjunction + curRankAtoms.get(1).toString() + disjunction + curRankAtoms.get(2).toString();
                 break;
         }
-        formulas.add(new Formula(antecedent, consequent));
+        defImplications.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex formulas using the conjunction connective.
-    public static void conjunctionFormula(String key, AtomBuilder gen, ArrayList<Formula> formulas, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex defImplications using the conjunction connective.
+    public static void conjunctionDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String conjunction = con.getConjunctionSymbol();
         String antecedent = "";
@@ -127,11 +127,11 @@ public class FormulaBuilder{
                 consequent = gen.generateAtom().toString() + conjunction + curRankAtoms.get(0).toString() + conjunction + gen.generateAtom().toString();
                 break;
         }
-        formulas.add(new Formula(antecedent, consequent));
+        defImplications.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex formulas using the implication connective.
-    public static void implicationFormula(String key, AtomBuilder gen, ArrayList<Formula> formulas, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex defImplications using the implication connective.
+    public static void implicationDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String implication = con.getImplicationSymbol();
         String antecedent = "";
@@ -174,11 +174,11 @@ public class FormulaBuilder{
                 // curRankAtoms.add(c);
                 break;
         }
-        formulas.add(new Formula(antecedent, consequent));
+        defImplications.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex formulas using the bi-implication connective.
-    public static void biImplicationFormula(String key, AtomBuilder gen, ArrayList<Formula> formulas, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex defImplications using the bi-implication connective.
+    public static void biImplicationDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String biimplication = con.getBiImplicationSymbol();
         String antecedent = "";
@@ -221,11 +221,11 @@ public class FormulaBuilder{
                 // curRankAtoms.add(c);
                 break;
         }
-        formulas.add(new Formula(antecedent, consequent));
+        defImplications.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex formulas using a mixture of connectives.
-    public static void mixedFormula(String key, AtomBuilder gen, ArrayList<Formula> formulas, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex defImplications using a mixture of connectives.
+    public static void mixedDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         int[] connective = {0,1,2,3};
         String antecedent = "";
@@ -255,6 +255,6 @@ public class FormulaBuilder{
                 consequent = gen.generateAtom().toString() + Connective.getRandom(connective, con) + gen.generateAtom().toString() + Connective.getRandom(connective, con) + gen.generateAtom().toString();
                 break;
         }
-        formulas.add(new Formula(antecedent, consequent));
+        defImplications.add(new DefImplication(antecedent, consequent));
     }
 }
