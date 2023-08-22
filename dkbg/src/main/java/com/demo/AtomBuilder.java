@@ -64,13 +64,15 @@ public class AtomBuilder{
             sb.setLength(0);
             for (int i = 0; i < length; i++){
                 char randomChar = (char) (startChar + random.nextInt(endChar - startChar + 1));
-                
                 sb.append(randomChar);
             }   
             atom.setAtom(sb.toString());
-        }while(atomList.contains(atom.toString())!=false);
-        atomCount++;
-        atomList.add(atom.toString());
+        }while(atomList.contains(atom.toString()));
+        synchronized(atomList){
+            atomCount++;
+            atomList.add(atom.toString());
+        }
+        
         return atom;
     }
 

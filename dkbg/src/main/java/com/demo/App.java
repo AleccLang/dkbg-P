@@ -226,7 +226,7 @@ public class App
                 else{
                     do{
                         ExecutorService executor = Executors.newSingleThreadExecutor();
-                        long timeoutDuration = 1000;
+                        long timeoutDuration = 15000;
                         try{
                             Callable<LinkedHashSet<LinkedHashSet<DefImplication>>> kbGenerationTask = () -> {
                                 return KBGeneratorThreaded.KBGenerate(defImplicationDistribution, simple, complexityAnt, complexityCon, connectiveTypes);
