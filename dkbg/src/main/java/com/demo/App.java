@@ -55,7 +55,6 @@ public class App
                 numRanks = in.nextInt();
             }
 
-            // Maybe have distribution first, because the number of defImplications are dependent on the distribution and the number of ranks.
             System.out.println("Enter the defImplication distribution [f (flat), lg (linear-growth), ld (linear-decline), r (random)]:");
             System.out.print("> ");
             String distribution = in.next(); // Distribution of the defImplications in the knowledge base
@@ -84,7 +83,7 @@ public class App
 
             System.out.println("Reuse Consequent? [y, n]:");
             System.out.print("> ");
-            String reuseAnt = in.next(); // Reuse the rankBuildAntecedent to generate ranks in the knowledge base
+            String reuseAnt = in.next(); // Reuse the rankBaseConsequent to generate ranks in the knowledge base
             boolean reuseConsequent = (reuseAnt.equalsIgnoreCase("y")) ? true : false;
 
             if(simple == false){
@@ -210,7 +209,7 @@ public class App
                         connectiveTypes[i] = connectiveList.get(i);
                 }
 
-                System.out.println("Generator type? [s (standard), e (efficient)]:");
+                System.out.println("Generator type? [s (standard), o (optimised)]:");
                 System.out.print("> ");
                 String type = in.next(); // Knowledge base generation using only simple defImplications
                 System.out.println("Generating Knowledge Base:");

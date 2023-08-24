@@ -11,8 +11,8 @@ public class KBGenerator{
         Random random = new Random();
         int rank = 0;
         LinkedHashSet<LinkedHashSet<DefImplication>> KB = new LinkedHashSet<LinkedHashSet<DefImplication>>(); // Creating KB.
-        Atom rankBuildCons = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
-        Atom rankBuildAnt = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
+        Atom rankBaseCons = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
+        Atom rankBaseAnt = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
         ArrayList<Atom> anyRankAtoms = new ArrayList<Atom>(); // Reusable atoms in any rank.
 
         while(rank!=defImplicationDistribution.length){
@@ -22,19 +22,19 @@ public class KBGenerator{
             int defImplicationNum = defImplicationDistribution[rank];
             if(rank==0){
                 defImplicationNum--;
-                DefImplicationBuilder.rankZero(defImplications, rankBuildCons, rankBuildAnt);
+                DefImplicationBuilder.rankZero(defImplications, rankBaseCons, rankBaseAnt);
             }
             else{
-                if(reuseConsequent == false && defImplicationNum >=3){ // Don't reuse the original rankBuildCons in all ranks
-                    DefImplicationBuilder.rankBuilder(generator, defImplications, rankBuildCons, rankBuildAnt);
+                if(reuseConsequent == false && defImplicationNum >=3){ // Don't reuse the original rankBaseCons in all ranks
+                    DefImplicationBuilder.rankBuilder(generator, defImplications, rankBaseCons, rankBaseAnt);
                     defImplicationNum--;
                 }
-                else{ // Reuse the original rankBuildCons in all ranks
-                    DefImplicationBuilder.rankBuilderConstricted(generator, defImplications, rankBuildCons, rankBuildAnt);
+                else{ // Reuse the original rankBaseCons in all ranks
+                    DefImplicationBuilder.rankBuilderConstricted(generator, defImplications, rankBaseCons, rankBaseAnt);
                 }
                 defImplicationNum = defImplicationNum - 2;
             }
-            curRankAtoms.add(rankBuildAnt);
+            curRankAtoms.add(rankBaseAnt);
             ArrayList<String> c = new ArrayList<>();
             while(defImplicationNum!=0){
                 if(simpleOnly == true){
@@ -44,7 +44,7 @@ public class KBGenerator{
                     switch(decision){
                         case 0: 
                             // Adds defImplication with a new atom as antecedent and random curRankAtom as consequent.
-                            Atom[] temp = DefImplicationBuilder.recycleAntecedent(generator, defImplications, curRankAtoms.get(i));
+                            Atom[] temp = DefImplicationBuilder.recycleAtom(generator, defImplications, curRankAtoms.get(i));
                             curRankAtoms.add(temp[0]);
                             defImplicationNum--;
                             break;
@@ -57,7 +57,7 @@ public class KBGenerator{
                         case 2:
                             // Reuses an antecedent from a previous rank as consequent in a new rank.
                             if(anyRankAtoms.size()==0){
-                                temp = DefImplicationBuilder.recycleAntecedent(generator, defImplications, curRankAtoms.get(i));
+                                temp = DefImplicationBuilder.recycleAtom(generator, defImplications, curRankAtoms.get(i));
                                 curRankAtoms.add(temp[0]);
                             }
                             else{
@@ -94,7 +94,7 @@ public class KBGenerator{
                     defImplicationNum--;
                 }
             }
-            rankBuildCons.negateAtom(); // Negates the consequent for formation of next rank.
+            rankBaseCons.negateAtom(); // Negates the consequent for formation of next rank.
             KB.add(new LinkedHashSet<DefImplication>(defImplications));
             anyRankAtoms.addAll(anyRankAtomsTemp);
             rank++;

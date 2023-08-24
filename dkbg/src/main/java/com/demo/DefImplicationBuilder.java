@@ -8,39 +8,39 @@ public class DefImplicationBuilder{
     private static Connective con = Connective.getInstance();
 
     // Generates the minimum defImplications and structure needed for a rank.
-    public static void rankZero(ArrayList<DefImplication> defImplications, Atom rankBuildCons, Atom rankBuildAnt){
-        defImplications.add(new DefImplication(rankBuildAnt.toString(), new Atom(rankBuildCons).toString())); //
+    public static void rankZero(ArrayList<DefImplication> defImplications, Atom rankBaseCons, Atom rankBaseAnt){
+        defImplications.add(new DefImplication(rankBaseAnt.toString(), new Atom(rankBaseCons).toString())); //
     }
 
     // Baseline defImplications and structure needed for a rank in a KB.
-    public static void rankBuilderConstricted(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBuildCons, Atom rankBuildAnt){
+    public static void rankBuilderConstricted(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBaseCons, Atom rankBaseAnt){
         Atom atom = gen.generateAtom();
-        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBuildCons).toString())); // 
-        defImplications.add(new DefImplication(atom.toString(), rankBuildAnt.toString())); 
-        rankBuildAnt.setAtom(atom.toString());
+        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBaseCons).toString())); // 
+        defImplications.add(new DefImplication(atom.toString(), rankBaseAnt.toString())); 
+        rankBaseAnt.setAtom(atom.toString());
     }
 
     // Generates baseline defImplications and structure with a new consequent for next rank in a KB.
-    public static void rankBuilder(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBuildCons, Atom rankBuildAnt){
-        Atom newRankBaseCons = gen.generateAtom(); // Atom acts as the rankBuildCons in the next rank.
+    public static void rankBuilder(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBaseCons, Atom rankBaseAnt){
+        Atom newRankBaseCons = gen.generateAtom(); // Atom acts as the rankBaseCons in the next rank.
         Atom atom = gen.generateAtom();
-        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBuildCons).toString())); // 
+        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBaseCons).toString())); // 
         defImplications.add(new DefImplication(atom.toString(), new Atom(newRankBaseCons).toString()));
-        defImplications.add(new DefImplication(atom.toString(), rankBuildAnt.toString()));
-        rankBuildCons.setAtom(newRankBaseCons.toString());
-        rankBuildAnt.setAtom(atom.toString());
+        defImplications.add(new DefImplication(atom.toString(), rankBaseAnt.toString()));
+        rankBaseCons.setAtom(newRankBaseCons.toString());
+        rankBaseAnt.setAtom(atom.toString());
     }
 
-    // Method to generate simple defImplications by using a atom as antecedent and reusing the rankBuildAnt as consequent.
-    public static Atom[] recycleAntecedent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBuildAnt){ // Generates new consequent for next rank in an unrestriced KB.
+    // Method to generate simple defImplications by using a atom as antecedent and reusing the currRankAtom as consequent.
+    public static Atom[] recycleAtom(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBaseAnt){
         Atom atom = gen.generateAtom();
         Atom[] atoms = {atom};
-        defImplications.add(new DefImplication(atom.toString(), rankBuildAnt.toString())); 
+        defImplications.add(new DefImplication(atom.toString(), rankBaseAnt.toString())); 
         return atoms;
     }
 
     // Method to generate simple defImplications by using a new negated atom as antecedent and a currRankAtom as consequent.
-    public static Atom[] negateAntecedent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom currRankAtom){ // Generates new consequent for next rank in an unrestriced KB.
+    public static Atom[] negateAntecedent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom currRankAtom){ 
         Atom atom = gen.generateAtom();
         atom.negateAtom();
         Atom[] atoms = {atom};
@@ -49,7 +49,7 @@ public class DefImplicationBuilder{
     }
 
     // Method to generate simple defImplications by using a currRankAtom as antecedent and a negated anyRankAtom as consequent.
-    public static void reuseConsequent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom anyRankAtom, Atom currRankAtom){ // Generates new consequent for next rank in an unrestriced KB.
+    public static void reuseConsequent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom anyRankAtom, Atom currRankAtom){
         anyRankAtom.negateAtom();
         defImplications.add(new DefImplication(currRankAtom.toString(), new Atom(anyRankAtom).toString()));
     }
