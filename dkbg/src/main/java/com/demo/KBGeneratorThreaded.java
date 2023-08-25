@@ -13,6 +13,7 @@ public class KBGeneratorThreaded{
     public static LinkedHashSet<LinkedHashSet<DefImplication>> KBGenerate(int[] defImplicationDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
         LinkedHashSet<LinkedHashSet<DefImplication>> KB = new LinkedHashSet<LinkedHashSet<DefImplication>>();
+        ArrayList<Atom> anyRankAtoms = new ArrayList<Atom>(); // Reusable atoms in any rank.
         Atom rankBaseCons = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
         Atom[] rankBaseAnts = new Atom[defImplicationDistribution.length]; // Stores each ranks rankBaseAnt to tie the ranks together.
 
@@ -21,7 +22,7 @@ public class KBGeneratorThreaded{
 
             for (int rank = 0; rank < defImplicationDistribution.length; rank++){
                 int r = rank;
-                Future<LinkedHashSet<DefImplication>> future = executor.submit(() -> generateRank(r, defImplicationDistribution, simpleOnly, complexityAnt, complexityCon, connectiveType, rankBaseCons, rankBaseAnts));
+                Future<LinkedHashSet<DefImplication>> future = executor.submit(() -> generateRank(r, defImplicationDistribution, simpleOnly, complexityAnt, complexityCon, connectiveType, rankBaseCons, rankBaseAnts, anyRankAtoms));
                 futures.add(future);
             }
 
@@ -49,10 +50,11 @@ public class KBGeneratorThreaded{
         return KB;
     }
 
-    private static LinkedHashSet<DefImplication> generateRank(int rank, int[] defImplicationDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType, Atom rankBaseCons, Atom[] rankBaseAnts){
+    private static LinkedHashSet<DefImplication> generateRank(int rank, int[] defImplicationDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType, Atom rankBaseCons, Atom[] rankBaseAnts, ArrayList<Atom> anyRankAtoms){
 
         Random random = new Random();
         Atom rankBaseAnt = generator.generateAtom(); // Atom acts as the lynchpin for generating new ranks.
+        ArrayList<Atom> anyRankAtomsTemp = new ArrayList<Atom>();
         
         synchronized(rankBaseAnts){
             rankBaseAnts[rank] = rankBaseAnt;
@@ -87,9 +89,24 @@ public class KBGeneratorThreaded{
                         curRankAtoms.add(temp[0]);
                         defImplicationNum--;
                         break;
-                    case 1:
+                        case 1:
                         // Adds defImplication with negated atom as antecedent and random curRankAtom as consequent.
                         temp = DefImplicationBuilder.negateAntecedent(generator, defImplications, curRankAtoms.get(i));
+                        anyRankAtomsTemp.add(temp[0]);
+                        defImplicationNum--;
+                        break;
+                    case 2:
+                        // Reuses an antecedent from a previous rank as consequent in a new rank.
+                        if(anyRankAtoms.size()==0){
+                            temp = DefImplicationBuilder.recycleAtom(generator, defImplications, curRankAtoms.get(i));
+                            curRankAtoms.add(temp[0]);
+                        }
+                        else{
+                            int j = (int)(Math.random() * anyRankAtoms.size()); // Get random atom from atoms usable in any rank. 
+                            DefImplicationBuilder.reuseConsequent(generator, defImplications, anyRankAtoms.get(j), curRankAtoms.get(i));
+                            anyRankAtomsTemp.add(anyRankAtoms.get(j));
+                            anyRankAtoms.remove(j);
+                        }
                         defImplicationNum--;
                         break;
                 }
@@ -117,6 +134,7 @@ public class KBGeneratorThreaded{
                 defImplicationNum--;
             }
         }
+        anyRankAtoms.addAll(anyRankAtomsTemp);
         return new LinkedHashSet<>(defImplications);
     }
 }
