@@ -9,8 +9,6 @@ public class KBGeneratorThreaded{
 
     private static AtomBuilder generator = AtomBuilder.getInstance();
     private static int numThreads = Runtime.getRuntime().availableProcessors();
-    
-
 
     public static LinkedHashSet<LinkedHashSet<DefImplication>> KBGenerate(int[] defImplicationDistribution, boolean simpleOnly, int[] complexityAnt, int[] complexityCon, int[] connectiveType){
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
@@ -63,7 +61,7 @@ public class KBGeneratorThreaded{
         ArrayList<DefImplication> defImplications = new ArrayList<DefImplication>();
         ArrayList<Atom> curRankAtoms = new ArrayList<Atom>(); // Reusable atoms in current ranks antecedent.
         int defImplicationNum = defImplicationDistribution[rank];
-        // rankBaseAnt is always reused, 1 defImplication is generated first for each rank, no matter the rank
+        // rankBaseCons is always reused, 1 defImplication is generated first for each rank, no matter the rank
         defImplicationNum--;
         if(rank % 2 == 0){
             DefImplicationBuilder.rankZero(defImplications, rankBaseCons, rankBaseAnt);
