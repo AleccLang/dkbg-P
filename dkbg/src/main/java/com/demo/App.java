@@ -182,7 +182,7 @@ public class App
             }
             
             System.out.println("Enter the character set for the knowledge base [lowerlatin, upperlatin, altlatin, greek]");
-            System.out.println("Greek character set requires code page 65001");
+            System.out.println("Greek & altlatin character sets require code page 65001");
             System.out.println("Can set this in the terminal using 'chcp 65001'");
             System.out.print("> ");
             String characterSet = in.next(); // The character set used for the atoms
