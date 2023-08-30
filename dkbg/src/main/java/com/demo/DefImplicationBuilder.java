@@ -7,55 +7,104 @@ public class DefImplicationBuilder{
 
     private static Connective con = Connective.getInstance();
 
-    // Generates the minimum defImplications and structure needed for a rank.
-    public static void rankZero(ArrayList<DefImplication> defImplications, Atom rankBaseCons, Atom rankBaseAnt){
-        defImplications.add(new DefImplication(rankBaseAnt.toString(), new Atom(rankBaseCons).toString())); //
+    // Generates the minimum DIs and structure needed for a rank.
+    public static void rankZero(ArrayList<DefImplication> DIs, Atom rankBaseCons, Atom rankBaseAnt){
+        DIs.add(new DefImplication(rankBaseAnt.toString(), new Atom(rankBaseCons).toString())); //
     }
 
-    // Baseline defImplications and structure needed for a rank in a KB.
-    public static void rankBuilderConstricted(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBaseCons, Atom rankBaseAnt){
+    // Baseline DIs and structure needed for a rank in a KB.
+    public static void rankBuilderConstricted(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom rankBaseCons, Atom rankBaseAnt){
         Atom atom = gen.generateAtom();
-        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBaseCons).toString())); // 
-        defImplications.add(new DefImplication(atom.toString(), rankBaseAnt.toString())); 
+        DIs.add(new DefImplication(atom.toString(), new Atom(rankBaseCons).toString())); // 
+        DIs.add(new DefImplication(atom.toString(), rankBaseAnt.toString())); 
         rankBaseAnt.setAtom(atom.toString());
     }
 
-    // Generates baseline defImplications and structure with a new consequent for next rank in a KB.
-    public static void rankBuilder(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBaseCons, Atom rankBaseAnt){
+    // Generates baseline DIs and structure with a new consequent for next rank in a KB.
+    public static void rankBuilder(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom rankBaseCons, Atom rankBaseAnt){
         Atom newRankBaseCons = gen.generateAtom(); // Atom acts as the rankBaseCons in the next rank.
         Atom atom = gen.generateAtom();
-        defImplications.add(new DefImplication(atom.toString(), new Atom(rankBaseCons).toString())); // 
-        defImplications.add(new DefImplication(atom.toString(), new Atom(newRankBaseCons).toString()));
-        defImplications.add(new DefImplication(atom.toString(), rankBaseAnt.toString()));
+        DIs.add(new DefImplication(atom.toString(), new Atom(rankBaseCons).toString())); // 
+        DIs.add(new DefImplication(atom.toString(), new Atom(newRankBaseCons).toString()));
+        DIs.add(new DefImplication(atom.toString(), rankBaseAnt.toString()));
         rankBaseCons.setAtom(newRankBaseCons.toString());
         rankBaseAnt.setAtom(atom.toString());
     }
 
-    // Method to generate simple defImplications by using a atom as antecedent and reusing the currRankAtom as consequent.
-    public static Atom[] recycleAtom(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom rankBaseAnt){
+    // Determines simple DI generation type.
+    public static void simpleDI(int decision, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> anyRankAtoms, ArrayList<Atom> curRankAtoms, ArrayList<Atom> anyRankAtomsTemp){
+        int i = (int)(Math.random() * curRankAtoms.size());
+        switch(decision){
+            case 0: // Adds defImplication with a new atom as antecedent and random curRankAtom as consequent.
+                Atom[] temp = recycleAtom(gen, DIs, curRankAtoms.get(i));
+                curRankAtoms.add(temp[0]);
+                break;
+            case 1: // Adds defImplication with negated atom as antecedent and random curRankAtom as consequent.
+                temp = negateAntecedent(gen, DIs, curRankAtoms.get(i));
+                anyRankAtomsTemp.add(temp[0]);
+                break;
+            case 2: // Reuses an antecedent from a previous rank as consequent in a new rank. 
+                if(anyRankAtoms.size()==0){
+                    temp = recycleAtom(gen, DIs, curRankAtoms.get(i));
+                    curRankAtoms.add(temp[0]);
+                }
+                else{
+                    int j = (int)(Math.random() * anyRankAtoms.size()); // Get random atom from atoms usable in any rank. 
+                    reuseConsequent(gen, DIs, anyRankAtoms.get(j), curRankAtoms.get(i));
+                    anyRankAtomsTemp.add(anyRankAtoms.get(j));
+                    anyRankAtoms.remove(j);
+                }
+                break;
+        }
+    }
+
+    // Method to generate simple DIs by using a atom as antecedent and reusing the currRankAtom as consequent.
+    public static Atom[] recycleAtom(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom rankBaseAnt){
         Atom atom = gen.generateAtom();
         Atom[] atoms = {atom};
-        defImplications.add(new DefImplication(atom.toString(), rankBaseAnt.toString())); 
+        DIs.add(new DefImplication(atom.toString(), rankBaseAnt.toString())); 
         return atoms;
     }
 
-    // Method to generate simple defImplications by using a new negated atom as antecedent and a currRankAtom as consequent.
-    public static Atom[] negateAntecedent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom currRankAtom){ 
+    // Method to generate simple DIs by using a new negated atom as antecedent and a currRankAtom as consequent.
+    public static Atom[] negateAntecedent(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom currRankAtom){ 
         Atom atom = gen.generateAtom();
         atom.negateAtom();
         Atom[] atoms = {atom};
-        defImplications.add(new DefImplication(new Atom(atom).toString(), currRankAtom.toString())); 
+        DIs.add(new DefImplication(new Atom(atom).toString(), currRankAtom.toString())); 
         return atoms;
     }
 
-    // Method to generate simple defImplications by using a currRankAtom as antecedent and a negated anyRankAtom as consequent.
-    public static void reuseConsequent(AtomBuilder gen, ArrayList<DefImplication> defImplications, Atom anyRankAtom, Atom currRankAtom){
+    // Method to generate simple DIs by using a currRankAtom as antecedent and a negated anyRankAtom as consequent.
+    public static void reuseConsequent(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom anyRankAtom, Atom currRankAtom){
         anyRankAtom.negateAtom();
-        defImplications.add(new DefImplication(currRankAtom.toString(), new Atom(anyRankAtom).toString()));
+        DIs.add(new DefImplication(currRankAtom.toString(), new Atom(anyRankAtom).toString()));
+    }
+    
+    // Determines complex DI generation type
+    public static void complexDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
+        int s = Integer.parseInt(key.substring(0, 1));
+        switch(s){
+            case 1:
+                disjunctionDI(key, gen, DIs, curRankAtoms);
+                break;
+            case 2:
+                conjunctionDI(key, gen, DIs, curRankAtoms);
+                break;
+            case 3:
+                implicationDI(key, gen, DIs, curRankAtoms);
+                break;
+            case 4:
+                biImplicationDI(key, gen, DIs, curRankAtoms);
+                break;
+            case 5:
+                mixedDI(key, gen, DIs, curRankAtoms);
+                break;
+        }
     }
 
-    // Method to generate complex defImplications using the disjunction connective.
-    public static void disjunctionDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex DIs using the disjunction connective.
+    public static void disjunctionDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String disjunction = con.getDisjunctionSymbol();
         String antecedent = "";
@@ -92,11 +141,11 @@ public class DefImplicationBuilder{
                 consequent = curRankAtoms.get(0).toString() + disjunction + curRankAtoms.get(1).toString() + disjunction + curRankAtoms.get(2).toString();
                 break;
         }
-        defImplications.add(new DefImplication(antecedent, consequent));
+        DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex defImplications using the conjunction connective.
-    public static void conjunctionDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex DIs using the conjunction connective.
+    public static void conjunctionDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String conjunction = con.getConjunctionSymbol();
         String antecedent = "";
@@ -127,11 +176,11 @@ public class DefImplicationBuilder{
                 consequent = gen.generateAtom().toString() + conjunction + curRankAtoms.get(0).toString() + conjunction + gen.generateAtom().toString();
                 break;
         }
-        defImplications.add(new DefImplication(antecedent, consequent));
+        DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex defImplications using the implication connective.
-    public static void implicationDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex DIs using the implication connective.
+    public static void implicationDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String implication = con.getImplicationSymbol();
         String antecedent = "";
@@ -174,11 +223,11 @@ public class DefImplicationBuilder{
                 // curRankAtoms.add(c);
                 break;
         }
-        defImplications.add(new DefImplication(antecedent, consequent));
+        DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex defImplications using the bi-implication connective.
-    public static void biImplicationDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex DIs using the bi-implication connective.
+    public static void biImplicationDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         String biimplication = con.getBiImplicationSymbol();
         String antecedent = "";
@@ -221,11 +270,11 @@ public class DefImplicationBuilder{
                 // curRankAtoms.add(c);
                 break;
         }
-        defImplications.add(new DefImplication(antecedent, consequent));
+        DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex defImplications using a mixture of connectives.
-    public static void mixedDefImplication(String key, AtomBuilder gen, ArrayList<DefImplication> defImplications, ArrayList<Atom> curRankAtoms){
+    // Method to generate complex DIs using a mixture of connectives.
+    public static void mixedDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
         Collections.shuffle(curRankAtoms); //// optimise
         int[] connective = {0,1,2,3};
         String antecedent = "";
@@ -255,6 +304,6 @@ public class DefImplicationBuilder{
                 consequent = gen.generateAtom().toString() + Connective.getRandom(connective, con) + gen.generateAtom().toString() + Connective.getRandom(connective, con) + gen.generateAtom().toString();
                 break;
         }
-        defImplications.add(new DefImplication(antecedent, consequent));
+        DIs.add(new DefImplication(antecedent, consequent));
     }
 }

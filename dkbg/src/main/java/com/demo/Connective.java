@@ -26,6 +26,7 @@ public class Connective{
         return instance;
     }
 
+    // Resets symbols to default.
     public void reset(){
         defeasibleImplicationSymbol = "~>";
         conjunctionSymbol = "&"; // ∧

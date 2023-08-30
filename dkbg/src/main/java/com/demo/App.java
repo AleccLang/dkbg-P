@@ -32,8 +32,9 @@ public class App
     private static AtomBuilder gen = AtomBuilder.getInstance();
     private static long startTime;
     private static long endTime;
+    private static long tot;
     private static int filenum = 1;
-    static String choice;
+    private static String choice;
 
     public static void main( String[] args ){
         Rules r = new Rules();
@@ -209,6 +210,12 @@ public class App
                         connectiveTypes[i] = connectiveList.get(i);
                 }
 
+                if(simple == false){
+                    if((complexityAnt.length == 1 & complexityCon.length == 1) & (complexityAnt[0] == 0 & complexityCon[0] == 0)){
+                        simple = true;
+                    }
+                }
+
                 System.out.println("Generator type? [s (standard), o (optimised)]:");
                 System.out.print("> ");
                 String type = in.next(); // Knowledge base generation using only simple defImplications
@@ -220,15 +227,17 @@ public class App
                     KB = KBGenerator.KBGenerate(defImplicationDistribution, simple, reuseConsequent, complexityAnt, complexityCon, connectiveTypes);
                     endTime = System.currentTimeMillis();
                     long executionTime = endTime - startTime;
+                    tot = tot + executionTime;
                     System.out.println("Time taken for standard KB generation (in milliseconds): " + executionTime);
                 }
                 else{
+                    boolean s = simple;
                     do{
                         ExecutorService executor = Executors.newSingleThreadExecutor();
-                        long timeoutDuration = 15000;
+                        long timeoutDuration = 1130000;
                         try{
                             Callable<LinkedHashSet<LinkedHashSet<DefImplication>>> kbGenerationTask = () -> {
-                                return KBGeneratorThreaded.KBGenerate(defImplicationDistribution, simple, complexityAnt, complexityCon, connectiveTypes);
+                                return KBGeneratorThreaded.KBGenerate(defImplicationDistribution, s, complexityAnt, complexityCon, connectiveTypes);
                             };
 
                             startTime = System.currentTimeMillis();
@@ -237,6 +246,7 @@ public class App
 
                             endTime = System.currentTimeMillis();
                             long executionTime = endTime - startTime;
+                            tot = tot + executionTime;
                             System.out.println("Time taken for threaded KB generation (in milliseconds): " + executionTime);
                             rerun = false;
 
@@ -292,6 +302,12 @@ public class App
                 choice = in.next();
                 
             }while(choice.equalsIgnoreCase("r"));
+            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
+            System.out.println("Total: " + tot/2);
+            tot = 0;
         }while(choice.equalsIgnoreCase("c"));
         System.out.println("Quitting");
         in.close();

@@ -5,6 +5,7 @@ import java.util.Arrays;
 // Calculates the distribution of defImplications over the ranks, depending on the distribution type.
 public class Distribution{
 
+    // Controls the distribution calculation for DIs over the ranks.
     public static int[] distributeDefImplications(int numDefImplications, int numRanks, String distribution){
         int[] ranks = new int[numRanks];
 
@@ -24,7 +25,6 @@ public class Distribution{
             default:
                 throw new IllegalArgumentException("Invalid distribution type: " + distribution);
         }
-
         return ranks;
     }
 

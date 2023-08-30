@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Random;
 
 public class AtomBuilder{
-    private static AtomBuilder generator;
-    private static char startChar; 
-    private static char endChar;
-
-    private static List<String> atomList;
+    private static AtomBuilder gen;
+    private char startChar; 
+    private char endChar;
+    private List<String> atomList;
     private Random random;
     private int length = 1;
     private int atomCount = 0;
@@ -22,18 +21,20 @@ public class AtomBuilder{
     }
 
     public static AtomBuilder getInstance(){
-        if (generator == null){
-            generator = new AtomBuilder();
+        if (gen == null){
+            gen = new AtomBuilder();
         }
-        return generator;
+        return gen;
     }
 
+    // Resets the settings to default.
     public void reset(){
         atomList.clear();
         length = 1;
         atomCount = 0;
     }
 
+    // Sets the character set to be used for atom generation.
     public void setCharacters(String characterSet){
         switch(characterSet){
             case "upperlatin":
@@ -55,6 +56,7 @@ public class AtomBuilder{
         }
     }
 
+    // Generates an atoms.
     public Atom generateAtom(){
         Atom atom = new Atom();
         StringBuilder sb = new StringBuilder();
@@ -76,26 +78,16 @@ public class AtomBuilder{
         return atom;
     }
 
+    // Updates the atom length.
     public void countChecker(){
-        switch (atomCount){
-            case 24:
-                length = 2;
-                break;
-            case 600:
-                length = 3;
-                break;
-            case 14424:
-                length = 4;
-                break;
-            case 346200:
-                length = 5;
-                break;
-            case 8308824:
-                length = 6;
-                break;
-            case 199411800:
-                length = 7;
-                break;
+        int len = length;
+        int temp = 0;
+        while(len!=0){
+            temp += Math.pow(24, len);
+            len--;
+        }
+        if(atomCount == temp){
+            length++;
         }
     }
 }

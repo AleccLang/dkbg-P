@@ -12,10 +12,12 @@ public class Atom{
         this.atom = new String(x.atom);
     }
 
+    // Sets an atom to a specified string.
     public void setAtom(String string){
         atom = string;
     }
 
+    // Negates an atom.
     public void negateAtom(){
         if(atom.startsWith(con.getNegationSymbol())){
             atom = atom.substring(1);
@@ -25,6 +27,7 @@ public class Atom{
         }
     }
 
+    // String representaion of an atom.
     @Override
     public String toString(){
         return  atom;

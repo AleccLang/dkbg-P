@@ -51,22 +51,17 @@ public class Rules{
         keyMap.put("5,2,2", "2");
     }
 
-    // Checks if there are enough currRankAtoms available to generate a statement for a given key and returns key if
-    // it is valid.
+    /*  Checks if there are enough currRankAtoms available to generate a statement for a given key and returns key if
+    it is valid.*/
     public static String checker(String key, int curRankAtomNum){
         String temp = keyMap.get(key);
         // Do this to avoid problems with implication and bi-implication.
         if(temp == null){
-            return "1,0,0";
+            return "1,0,0"; // Generates simple DI.
         }
         else{
             int curRankAtomMin = Integer.parseInt(temp.substring(0,1));
-            if(Integer.parseInt(key.substring(0, 1)) == 5){ // For mixed statements, could optimise this?
-                return (curRankAtomNum>=curRankAtomMin) ? key : "5,0," + key.substring(4,5);
-            }
-            else{
-                return (curRankAtomNum>=curRankAtomMin) ? key : key.substring(0,4)+ "0";
-            }
+            return (curRankAtomNum>=curRankAtomMin) ? key : "1,0,0";
         }
     }
 
