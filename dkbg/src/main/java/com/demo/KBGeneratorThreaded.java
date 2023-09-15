@@ -1,12 +1,12 @@
-/**
- * The KBGeneratorThreaded class provides an optimised version of defeasible knowledge base generation
- * using multithreading for parallel processing.
- */
 package com.demo;
 
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * The KBGeneratorThreaded class provides an optimised version of defeasible knowledge base generation
+ * using multithreading for parallel processing.
+ */
 public class KBGeneratorThreaded{
 
     private static AtomBuilder gen = AtomBuilder.getInstance();

@@ -1,9 +1,9 @@
+package com.demo;
+
 /**
  * The Connective class is responsible for managing the logical connective symbols.
  * It provides default symbols and allows customization of the symbols.
  */
-package com.demo;
-
 public class Connective {
     private static Connective instance;
     private String defeasibleImplicationSymbol;

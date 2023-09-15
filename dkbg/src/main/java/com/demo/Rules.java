@@ -1,10 +1,10 @@
-/**
- * The Rules class defines and manages the rules controlling the generation of complex defeasible implications.
- */
 package com.demo;
 
 import java.util.HashMap;
 
+/**
+ * The Rules class defines and manages the rules controlling the generation of complex defeasible implications.
+ */
 public class Rules{
     
     private static HashMap<String, String> keyMap; // Hashmap of complex statements and their required available currRankAtoms

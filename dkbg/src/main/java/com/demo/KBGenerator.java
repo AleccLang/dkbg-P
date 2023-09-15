@@ -1,10 +1,10 @@
-/**
- * The KBGenerator class controls the generation of defeasible knowledge bases.
-*/
 package com.demo;
 
 import java.util.*;
 
+/**
+ * The KBGenerator class controls the generation of defeasible knowledge bases.
+*/
 public class KBGenerator{
     
     private static AtomBuilder gen = AtomBuilder.getInstance();

@@ -1,8 +1,8 @@
+package com.demo;
+
 /**
  * The Atom class represents an atomic proposition and encapsulates the properties and behavior associated with individual atoms.
  */
-package com.demo;
-
 public class Atom {
     private static Connective con = Connective.getInstance();
     private String atom;

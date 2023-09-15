@@ -1,12 +1,12 @@
-/**
- * The AtomBuilder class provides functions for generating and keeping track of atoms in a knowledge base.
- */
 package com.demo;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * The AtomBuilder class provides functions for generating and keeping track of atoms in a knowledge base.
+ */
 public class AtomBuilder {
     private static AtomBuilder gen;
     private char startChar;

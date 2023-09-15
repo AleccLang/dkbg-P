@@ -1,6 +1,4 @@
-/**
- * The App class is responsible for generating a knowledge base (KB) of defeasible implications based on user-defined parameters.
- */
+
 package com.demo;
 
 import java.io.File;
@@ -8,7 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
-
+/**
+ * The App class is responsible for generating a knowledge base (KB) of defeasible implications based on user-defined parameters.
+ */
 public class App 
 {
     private static Connective con = Connective.getInstance();
@@ -222,7 +222,7 @@ public class App
                     boolean s = simple;
                     do{
                         ExecutorService executor = Executors.newSingleThreadExecutor();
-                        long timeoutDuration = 1125000;
+                        long timeoutDuration = 5000;
                         try{
                             Callable<LinkedHashSet<LinkedHashSet<DefImplication>>> kbGenerationTask = () -> {
                                 return KBGeneratorThreaded.KBGenerate(defImplicationDistribution, s, complexityAnt, complexityCon, connectiveTypes);

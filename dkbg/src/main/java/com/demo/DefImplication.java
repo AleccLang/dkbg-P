@@ -1,8 +1,8 @@
+package com.demo;
+
 /**
  * The DefImplication class represents a defeasible implication and provides functions to manipulate and access its components
  */
-package com.demo;
-
 public class DefImplication {
 
     private static Connective con = Connective.getInstance();

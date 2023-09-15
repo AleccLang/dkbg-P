@@ -1,12 +1,12 @@
-/**
- * The DefImplicationBuilder class provides methods for generating defeasible implications (DIs)
- * and their associated structures within a knowledge base.
- */
 package com.demo;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * The DefImplicationBuilder class provides methods for generating defeasible implications (DIs)
+ * and their associated structures within a knowledge base.
+ */
 public class DefImplicationBuilder{
 
     private static Connective con = Connective.getInstance();
