@@ -1,8 +1,8 @@
 package com.demo;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The AtomBuilder class provides functions for generating and keeping track of atoms in a knowledge base.
@@ -11,7 +11,7 @@ public class AtomBuilder {
     private static AtomBuilder gen;
     private char startChar;
     private char endChar;
-    private List<String> atomList;
+    private List<String> atomList = new CopyOnWriteArrayList<>();
     private Random random;
     private int length = 1;
     private int atomCount = 0;
@@ -20,7 +20,7 @@ public class AtomBuilder {
      * Constructs an AtomBuilder with default settings.
      */
     public AtomBuilder() {
-        atomList = new ArrayList<>();
+        atomList = new CopyOnWriteArrayList<>();
         random = new Random();
         startChar = '\u0041';
         endChar = '\u0058';
