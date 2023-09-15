@@ -16,7 +16,7 @@ Requirements for the project to be run:
 * Apache Maven (https://maven.apache.org/download.cgi)
 
 ## Build
-Run the following command in the DKBG directory to build the package.
+Run the following command in the main directory to build the package.
 
 Build: $ mvn clean package
 
