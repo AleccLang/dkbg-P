@@ -13,9 +13,6 @@ public class App
 {
     private static Connective con = Connective.getInstance();
     private static AtomBuilder gen = AtomBuilder.getInstance();
-    private static long startTime;
-    private static long endTime;
-    private static long tot;
     private static int filenum = 1;
     private static String choice;
 
@@ -211,31 +208,19 @@ public class App
                 LinkedHashSet<LinkedHashSet<DefImplication>> KB = new LinkedHashSet<>();
                 boolean rerun = true;
                 if(type.equalsIgnoreCase("s")){
-                    startTime = System.currentTimeMillis();
                     KB = KBGenerator.KBGenerate(defImplicationDistribution, simple, reuseConsequent, complexityAnt, complexityCon, connectiveTypes);
-                    endTime = System.currentTimeMillis();
-                    long executionTime = endTime - startTime;
-                    tot = tot + executionTime;
-                    System.out.println("Time taken for standard KB generation (in milliseconds): " + executionTime);
                 }
                 else{
                     boolean s = simple;
                     do{
                         ExecutorService executor = Executors.newSingleThreadExecutor();
-                        long timeoutDuration = 5000;
+                        long timeoutDuration = 10000;
                         try{
                             Callable<LinkedHashSet<LinkedHashSet<DefImplication>>> kbGenerationTask = () -> {
                                 return KBGeneratorThreaded.KBGenerate(defImplicationDistribution, s, complexityAnt, complexityCon, connectiveTypes);
                             };
-
-                            startTime = System.currentTimeMillis();
                             Future<LinkedHashSet<LinkedHashSet<DefImplication>>> future = executor.submit(kbGenerationTask);
                             KB = future.get(timeoutDuration, TimeUnit.MILLISECONDS);
-
-                            endTime = System.currentTimeMillis();
-                            long executionTime = endTime - startTime;
-                            tot = tot + executionTime;
-                            System.out.println("Time taken for threaded KB generation (in milliseconds): " + executionTime);
                             rerun = false;
 
                         }catch(TimeoutException e){
@@ -290,7 +275,6 @@ public class App
                 choice = in.next();
                 
             }while(choice.equalsIgnoreCase("r"));
-            tot = 0;
         }while(choice.equalsIgnoreCase("c"));
         System.out.println("Quitting");
         in.close();

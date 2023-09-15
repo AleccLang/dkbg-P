@@ -43,6 +43,7 @@ public class KBGeneratorThreaded{
             }
         }
         catch(InterruptedException | ExecutionException e){
+            
         }
         finally{
             executor.shutdown();
