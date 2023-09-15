@@ -296,7 +296,7 @@ public class App
         in.close();
     }
 
-    // Private helper methods
+    // Private helper methods:
 
     /**
      * Checks if the input string is a valid distribution type.
