@@ -1,6 +1,10 @@
+/**
+ * The Connective class is responsible for managing the logical connective symbols.
+ * It provides default symbols and allows customization of the symbols.
+ */
 package com.demo;
 
-public class Connective{
+public class Connective {
     private static Connective instance;
     private String defeasibleImplicationSymbol;
     private String conjunctionSymbol;
@@ -9,38 +13,61 @@ public class Connective{
     private String biImplicationSymbol;
     private String negationSymbol;
 
-    public Connective(){
+    /**
+     * Constructs a Connective object with default logical symbols.
+     * The default symbols are:
+     * - Defeasible Implication: "~>"
+     * - Conjunction: "&" (logical AND)
+     * - Disjunction: "||" (logical OR)
+     * - Implication: "=>" (logical implication)
+     * - Bi-Implication: "<=>" (logical bi-implication)
+     * - Negation: "!" (logical NOT)
+     */
+    public Connective() {
         // Default symbols
         defeasibleImplicationSymbol = "~>";
-        conjunctionSymbol = "&"; // ∧
-        disjunctionSymbol = "||"; // ∨
-        implicationSymbol = "=>"; // ⇒
-        biImplicationSymbol = "<=>"; // ⇔
-        negationSymbol = "!"; //¬
+        conjunctionSymbol = "&"; 
+        disjunctionSymbol = "||";
+        implicationSymbol = "=>";
+        biImplicationSymbol = "<=>";
+        negationSymbol = "!"; 
     }
 
-    public static Connective getInstance(){
-        if (instance == null){
+    /**
+     * Gets an instance of the Connective class.
+     *
+     * @return The Connective instance.
+     */
+    public static Connective getInstance() {
+        if (instance == null) {
             instance = new Connective();
         }
         return instance;
     }
 
-    // Resets symbols to default.
-    public void reset(){
+    /**
+     * Resets all logical symbols to their default values.
+     */
+    public void reset() {
         defeasibleImplicationSymbol = "~>";
-        conjunctionSymbol = "&"; // ∧
-        disjunctionSymbol = "||"; // ∨
-        implicationSymbol = "=>"; // ⇒
-        biImplicationSymbol = "<=>"; // ⇔
-        negationSymbol = "!"; //¬
+        conjunctionSymbol = "&";
+        disjunctionSymbol = "||";
+        implicationSymbol = "=>";
+        biImplicationSymbol = "<=>";
+        negationSymbol = "!";
     }
 
-    // Gets a random connective from the connectives provided.
-    public static String getRandom(int[] conArr, Connective con){ 
+    /**
+     * Gets a random logical connective symbol from the provided options.
+     *
+     * @param conArr An array representing available connective types.
+     * @param con    The Connective object to retrieve symbols from.
+     * @return A randomly selected connective symbol.
+     */
+    public static String getRandom(int[] conArr, Connective con) {
         String connective = "";
-        int type = (int)(Math.random() * conArr.length);
-        switch(type){
+        int type = (int) (Math.random() * conArr.length);
+        switch (type) {
             case 0:
                 connective = con.getConjunctionSymbol();
                 break;
@@ -56,58 +83,112 @@ public class Connective{
         }
         return connective;
     }
-    
-    // Allows the user to set a custom symbol for the defeaible implication
-    public void setDefImplicationSymbol(String symbol){
+
+    /**
+     * Allows the user to set a custom symbol for defeasible implication.
+     *
+     * @param symbol The custom symbol to set.
+     */
+    public void setDISymbol(String symbol) {
         defeasibleImplicationSymbol = symbol;
     }
 
-    // Allows the user to set a custom symbol for the conjunction connective
-    public void setConjunctionSymbol(String symbol){
+    /**
+     * Allows the user to set a custom symbol for the conjunction connective.
+     *
+     * @param symbol The custom symbol to set.
+     */
+    public void setConjunctionSymbol(String symbol) {
         conjunctionSymbol = symbol;
     }
 
-    // Allows the user to set a custom symbol for the conjunction connective
-    public void setDisjunctionSymbol(String symbol){
+    /**
+     * Allows the user to set a custom symbol for the disjunction connective.
+     *
+     * @param symbol The custom symbol to set.
+     */
+    public void setDisjunctionSymbol(String symbol) {
         disjunctionSymbol = symbol;
     }
 
-    // Allows the user to set a custom symbol for the implication connective
-    public void setImplicationSymbol(String symbol){
+    /**
+     * Allows the user to set a custom symbol for the implication connective.
+     *
+     * @param symbol The custom symbol to set.
+     */
+    public void setImplicationSymbol(String symbol) {
         implicationSymbol = symbol;
     }
 
-    // Allows the user to set a custom symbol for the bi-implication connective
-    public void setBiImplicationSymbol(String symbol){
+    /**
+     * Allows the user to set a custom symbol for the bi-implication connective.
+     *
+     * @param symbol The custom symbol to set.
+     */
+    public void setBiImplicationSymbol(String symbol) {
         biImplicationSymbol = symbol;
     }
 
-    // Allows the user to set a custom symbol for the negation connective
-    public void setNegationSymbol(String symbol){
+    /**
+     * Allows the user to set a custom symbol for the negation connective.
+     *
+     * @param symbol The custom symbol to set.
+     */
+    public void setNegationSymbol(String symbol) {
         negationSymbol = symbol;
     }
 
-    public String getDefImplicationSymbol(){
+    /**
+     * Gets the current symbol for defeasible implication.
+     *
+     * @return The defeasible implication symbol.
+     */
+    public String getDISymbol() {
         return defeasibleImplicationSymbol;
     }
 
-    public String getConjunctionSymbol(){
+    /**
+     * Gets the current symbol for conjunction.
+     *
+     * @return The conjunction symbol.
+     */
+    public String getConjunctionSymbol() {
         return conjunctionSymbol;
     }
 
-    public String getDisjunctionSymbol(){
+    /**
+     * Gets the current symbol for disjunction.
+     *
+     * @return The disjunction symbol.
+     */
+    public String getDisjunctionSymbol() {
         return disjunctionSymbol;
     }
 
-    public String getImplicationSymbol(){
+    /**
+     * Gets the current symbol for implication.
+     *
+     * @return The implication symbol.
+     */
+    public String getImplicationSymbol() {
         return implicationSymbol;
     }
 
-    public String getBiImplicationSymbol(){
+    /**
+     * Gets the current symbol for bi-implication.
+     *
+     * @return The bi-implication symbol.
+     */
+    public String getBiImplicationSymbol() {
         return biImplicationSymbol;
     }
 
-    public String getNegationSymbol(){
+    /**
+     * Gets the current symbol for negation.
+     *
+     * @return The negation symbol.
+     */
+    public String getNegationSymbol() {
         return negationSymbol;
     }
 }

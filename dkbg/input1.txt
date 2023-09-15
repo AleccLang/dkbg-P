@@ -1,6 +1,6 @@
-20
+200
 lg
-250
+25000
 n
 y
 0,1
@@ -8,7 +8,11 @@ y
 1,2
 n
 upperlatin
+s
+n
+n
+r
 o
-y
-y
+n
+n
 q

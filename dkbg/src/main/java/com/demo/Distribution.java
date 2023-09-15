@@ -1,37 +1,51 @@
+/**
+ * The Distribution class provides methods for calculating the distribution of defeasible implications (DIs) over ranks.
+ */
 package com.demo;
 
 import java.util.Arrays;
 
-// Calculates the distribution of defImplications over the ranks, depending on the distribution type.
+
 public class Distribution{
 
-    // Controls the distribution calculation for DIs over the ranks.
-    public static int[] distributeDefImplications(int numDefImplications, int numRanks, String distribution){
+    /**
+     * Controls the distribution calculation for DIs over the ranks based on the specified distribution type.
+     *
+     * @param numDIs      The total number of DIs to distribute.
+     * @param numRanks    The number of ranks over which DIs are distributed.
+     * @param distribution The type of distribution to calculate (f: flat, lg: linear growth, ld: linear decline, r: random).
+     * @return An array representing the calculated distribution of DIs over the ranks.
+     */
+    public static int[] distributeDIs(int numDIs, int numRanks, String distribution){
         int[] ranks = new int[numRanks];
 
         switch (distribution){
             case "f":
-                distributeFlat(numDefImplications, numRanks, ranks);
+                distributeFlat(numDIs, numRanks, ranks);
                 break;
             case "lg":
-                distributeLinearGrowth(numDefImplications, numRanks, ranks);
+                distributeLinearGrowth(numDIs, numRanks, ranks);
                 break;
             case "ld":
-                distributeLinearDecline(numDefImplications, numRanks, ranks);
+                distributeLinearDecline(numDIs, numRanks, ranks);
                 break;
             case "r":
-                distributeRandom(numDefImplications, numRanks, ranks);
+                distributeRandom(numDIs, numRanks, ranks);
                 break;
-            default:
-                throw new IllegalArgumentException("Invalid distribution type: " + distribution);
         }
         return ranks;
     }
 
-    // Calculates a flat distribution of defImplications over the ranks
-    private static void distributeFlat(int numDefImplications, int numRanks, int[] ranks){
-        int defImplicationsPerRank = numDefImplications / numRanks;
-        int remainder = numDefImplications % numRanks;
+    /**
+     * Calculates a flat distribution of DIs over the ranks.
+     *
+     * @param numDIs   The total number of DIs to distribute.
+     * @param numRanks The number of ranks over which DIs are distributed.
+     * @param ranks    An array to store the calculated distribution of DIs.
+     */
+    private static void distributeFlat(int numDIs, int numRanks, int[] ranks){
+        int defImplicationsPerRank = numDIs / numRanks;
+        int remainder = numDIs % numRanks;
 
         for (int i = 0; i < numRanks; i++){
             ranks[i] = defImplicationsPerRank;
@@ -45,46 +59,58 @@ public class Distribution{
         }
     }
 
-    // Calculates a linear growth distribution of defImplications over the ranks
-    private static void distributeLinearGrowth(int numDefImplications, int numRanks, int[] ranks){
-        int remainingDefImplications = numDefImplications;
+    /**
+     * Calculates a linear-growth distribution of DIs over the ranks.
+     *
+     * @param numDIs   The total number of DIs to distribute.
+     * @param numRanks The number of ranks over which DIs are distributed.
+     * @param ranks    An array to store the calculated distribution of DIs.
+     */
+    private static void distributeLinearGrowth(int numDIs, int numRanks, int[] ranks){
+        int remainingDIs = numDIs;
         
         for (int i = 0; i < numRanks; i++){
-            int defImplicationsToAdd = Math.min(remainingDefImplications, i + 1);
+            int defImplicationsToAdd = Math.min(remainingDIs, i + 1);
             ranks[i] = defImplicationsToAdd;
-            remainingDefImplications -= defImplicationsToAdd;
+            remainingDIs -= defImplicationsToAdd;
         }
     
         int currentRank = numRanks - 1;
-        while (remainingDefImplications > 0){
+        while (remainingDIs > 0){
             if(currentRank < 0){
                 currentRank = numRanks - 1;
             }
-            int defImplicationsToAdd = Math.min(remainingDefImplications, 1);
+            int defImplicationsToAdd = Math.min(remainingDIs, 1);
             ranks[currentRank] += defImplicationsToAdd;
-            remainingDefImplications -= defImplicationsToAdd;
+            remainingDIs -= defImplicationsToAdd;
             currentRank--;
         }
     }
     
-    // Calculates a linear decline distribution of defImplications over the ranks
-    private static void distributeLinearDecline(int numDefImplications, int numRanks, int[] ranks){
-        int remainingDefImplications = numDefImplications;
+    /**
+     * Calculates a linear-decline distribution of DIs over the ranks.
+     *
+     * @param numDIs   The total number of DIs to distribute.
+     * @param numRanks The number of ranks over which DIs are distributed.
+     * @param ranks    An array to store the calculated distribution of DIs.
+     */
+    private static void distributeLinearDecline(int numDIs, int numRanks, int[] ranks){
+        int remainingDIs = numDIs;
     
         for (int i = 0; i < numRanks; i++){
-            int defImplicationsToAdd = Math.min(remainingDefImplications, i + 1);
+            int defImplicationsToAdd = Math.min(remainingDIs, i + 1);
             ranks[i] = defImplicationsToAdd;
-            remainingDefImplications -= defImplicationsToAdd;
+            remainingDIs -= defImplicationsToAdd;
         }
     
         int currentRank = numRanks - 1;
-        while (remainingDefImplications > 0){
+        while (remainingDIs > 0){
             if(currentRank < 0){
                 currentRank = numRanks - 1;
             }
-            int defImplicationsToAdd = Math.min(remainingDefImplications, 1);
+            int defImplicationsToAdd = Math.min(remainingDIs, 1);
             ranks[currentRank] += defImplicationsToAdd;
-            remainingDefImplications -= defImplicationsToAdd;
+            remainingDIs -= defImplicationsToAdd;
             currentRank--;
         }
     
@@ -95,26 +121,42 @@ public class Distribution{
         }
     }
 
-    // Calculates a random distribution of defImplications over the ranks
-    private static void distributeRandom(int numDefImplications, int numRanks, int[] ranks){
-        int remainingDefImplications = numDefImplications - numRanks * 2;
+    /**
+     * Calculates a random distribution of DIs over the ranks.
+     *
+     * @param numDIs   The total number of DIs to distribute.
+     * @param numRanks The number of ranks over which DIs are distributed.
+     * @param ranks    An array to store the calculated distribution of DIs.
+     */
+    private static void distributeRandom(int numDIs, int numRanks, int[] ranks){
+        int remainingDIs = numDIs - numRanks * 2;
         Arrays.fill(ranks, 2);
 
-        while(remainingDefImplications > 0){
+        while(remainingDIs > 0){
             int i = (int)(Math.random() * ranks.length);
             ranks[i]++;
-            remainingDefImplications--;
+            remainingDIs--;
         }
     }
      
-    // Minimum defImplications needed for a linear increase distribution
-    public static int minDefImplicationsLinear(int numRanks){
+    /**
+     * Calculates the minimum number of DIs needed for a linear-growth distribution.
+     *
+     * @param numRanks The number of ranks over which DIs are distributed.
+     * @return The minimum number of DIs needed for a linear-growth distribution.
+     */
+    public static int minDIsLinear(int numRanks){
         int sum = numRanks * (numRanks + 1) / 2;
         return sum;
     }
 
-    // Minimum defImplications needed for a linear decrease distribution
-    public static int minDefImplicationsLinearDecline(int numRanks){
+    /**
+     * Calculates the minimum number of DIs needed for a linear-decline distribution.
+     *
+     * @param numRanks The number of ranks over which DIs are distributed.
+     * @return The minimum number of DIs needed for a linear-decline distribution.
+     */
+    public static int minDIsLinearDecline(int numRanks){
         int sum = 0;
         int x = 2;
         for(int i = 0; i < numRanks; i++){

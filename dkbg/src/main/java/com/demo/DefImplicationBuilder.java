@@ -1,3 +1,7 @@
+/**
+ * The DefImplicationBuilder class provides methods for generating defeasible implications (DIs)
+ * and their associated structures within a knowledge base.
+ */
 package com.demo;
 
 import java.util.ArrayList;
@@ -7,12 +11,25 @@ public class DefImplicationBuilder{
 
     private static Connective con = Connective.getInstance();
 
-    // Generates the minimum DIs and structure needed for a rank.
+    /**
+     * Generates the minimum DIs and structure needed for a rank.
+     *
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param rankBaseCons The consequent of the rank.
+     * @param rankBaseAnt  The antecedent of the rank.
+     */
     public static void rankZero(ArrayList<DefImplication> DIs, Atom rankBaseCons, Atom rankBaseAnt){
-        DIs.add(new DefImplication(rankBaseAnt.toString(), new Atom(rankBaseCons).toString())); //
+        DIs.add(new DefImplication(rankBaseAnt.toString(), new Atom(rankBaseCons).toString()));
     }
 
-    // Baseline DIs and structure needed for a rank in a KB.
+    /**
+     * Generates baseline DIs and structure needed for a rank in a knowledge base.
+     *
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param rankBaseCons The consequent of the rank.
+     * @param rankBaseAnt  The antecedent of the rank.
+     */
     public static void rankBuilderConstricted(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom rankBaseCons, Atom rankBaseAnt){
         Atom atom = gen.generateAtom();
         DIs.add(new DefImplication(atom.toString(), new Atom(rankBaseCons).toString())); // 
@@ -20,7 +37,14 @@ public class DefImplicationBuilder{
         rankBaseAnt.setAtom(atom.toString());
     }
 
-    // Generates baseline DIs and structure with a new consequent for next rank in a KB.
+    /**
+     * Generates baseline DIs and structure with a new consequent for the next rank in a knowledge base.
+     *
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param rankBaseCons The consequent of the current rank.
+     * @param rankBaseAnt  The antecedent of the current rank.
+     */
     public static void rankBuilder(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom rankBaseCons, Atom rankBaseAnt){
         Atom newRankBaseCons = gen.generateAtom(); // Atom acts as the rankBaseCons in the next rank.
         Atom atom = gen.generateAtom();
@@ -31,7 +55,16 @@ public class DefImplicationBuilder{
         rankBaseAnt.setAtom(atom.toString());
     }
 
-    // Determines simple DI generation type.
+    /**
+     * Determines the type of simple DI to generate and generates it.
+     *
+     * @param decision       The decision for DI generation type.
+     * @param gen            An AtomBuilder instance for generating atoms.
+     * @param DIs            The list of defeasible implications in the KB.
+     * @param anyRankAtoms   The list of atoms usable in any rank.
+     * @param curRankAtoms   The list of atoms usable in the current rank.
+     * @param anyRankAtomsTemp The temporary list of atoms usable in any rank.
+     */
     public static void simpleDI(int decision, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> anyRankAtoms, ArrayList<Atom> curRankAtoms, ArrayList<Atom> anyRankAtomsTemp){
         int i = (int)(Math.random() * curRankAtoms.size());
         switch(decision){
@@ -49,7 +82,7 @@ public class DefImplicationBuilder{
                     curRankAtoms.add(temp[0]);
                 }
                 else{
-                    int j = (int)(Math.random() * anyRankAtoms.size()); // Get random atom from atoms usable in any rank. 
+                    int j = (int)(Math.random() * anyRankAtoms.size()); // Get random atom from atoms usable in any rank.
                     reuseConsequent(gen, DIs, anyRankAtoms.get(j), curRankAtoms.get(i));
                     anyRankAtomsTemp.add(anyRankAtoms.get(j));
                     anyRankAtoms.remove(j);
@@ -58,7 +91,14 @@ public class DefImplicationBuilder{
         }
     }
 
-    // Method to generate simple DIs by using a atom as antecedent and reusing the currRankAtom as consequent.
+    /**
+     * Method to generate simple DIs by recycling an atom as antecedent and reusing the current rank atom as consequent.
+     *
+     * @param gen       An AtomBuilder instance for generating atoms.
+     * @param DIs       The list of defeasible implications in the KB.
+     * @param rankBaseAnt The current rank's antecedent.
+     * @return An array containing the generated atom.
+     */
     public static Atom[] recycleAtom(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom rankBaseAnt){
         Atom atom = gen.generateAtom();
         Atom[] atoms = {atom};
@@ -66,7 +106,14 @@ public class DefImplicationBuilder{
         return atoms;
     }
 
-    // Method to generate simple DIs by using a new negated atom as antecedent and a currRankAtom as consequent.
+    /**
+     * Method to generate simple DIs by using a new negated atom as antecedent and a current rank atom as consequent.
+     *
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param currRankAtom The current rank's atom.
+     * @return An array containing the generated atom.
+     */
     public static Atom[] negateAntecedent(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom currRankAtom){ 
         Atom atom = gen.generateAtom();
         atom.negateAtom();
@@ -75,13 +122,26 @@ public class DefImplicationBuilder{
         return atoms;
     }
 
-    // Method to generate simple DIs by using a currRankAtom as antecedent and a negated anyRankAtom as consequent.
+    /**
+     * Method to generate simple DIs by using a current rank atom as antecedent and a negated any rank atom as consequent.
+     *
+     * @param gen         An AtomBuilder instance for generating atoms.
+     * @param DIs         The list of defeasible implications in the KB.
+     * @param anyRankAtom The any rank atom to be negated.
+     */
     public static void reuseConsequent(AtomBuilder gen, ArrayList<DefImplication> DIs, Atom anyRankAtom, Atom currRankAtom){
         anyRankAtom.negateAtom();
         DIs.add(new DefImplication(currRankAtom.toString(), new Atom(anyRankAtom).toString()));
     }
     
-    // Determines complex DI generation type
+    /**
+     * Determines the type of complex DI to generate and generates it based on the provided key.
+     *
+     * @param key          The key specifying the type and complexity of the complex DI.
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param curRankAtoms The list of atoms usable in the current rank.
+     */
     public static void complexDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
         int s = Integer.parseInt(key.substring(0, 1));
         switch(s){
@@ -103,9 +163,16 @@ public class DefImplicationBuilder{
         }
     }
 
-    // Method to generate complex DIs using the disjunction connective.
+    /**
+     * Method to generate complex DIs using the disjunction connective.
+     *
+     * @param key          The key specifying the type and complexity of the complex DI.
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param curRankAtoms The list of atoms usable in the current rank.
+     */
     public static void disjunctionDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
-        Collections.shuffle(curRankAtoms); //// optimise
+        Collections.shuffle(curRankAtoms);
         String disjunction = con.getDisjunctionSymbol();
         String antecedent = "";
         String consequent = "";
@@ -144,9 +211,16 @@ public class DefImplicationBuilder{
         DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex DIs using the conjunction connective.
+    /**
+     * Method to generate complex DIs using the conjunction connective.
+     *
+     * @param key          The key specifying the type and complexity of the complex DI.
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param curRankAtoms The list of atoms usable in the current rank.
+     */
     public static void conjunctionDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
-        Collections.shuffle(curRankAtoms); //// optimise
+        Collections.shuffle(curRankAtoms);
         String conjunction = con.getConjunctionSymbol();
         String antecedent = "";
         String consequent = "";
@@ -179,9 +253,16 @@ public class DefImplicationBuilder{
         DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex DIs using the implication connective.
+    /**
+     * Method to generate complex DIs using the implication connective.
+     *
+     * @param key          The key specifying the type and complexity of the complex DI.
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param curRankAtoms The list of atoms usable in the current rank.
+     */
     public static void implicationDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
-        Collections.shuffle(curRankAtoms); //// optimise
+        Collections.shuffle(curRankAtoms);
         String implication = con.getImplicationSymbol();
         String antecedent = "";
         String consequent = "";
@@ -195,15 +276,10 @@ public class DefImplicationBuilder{
                 break;
             case 1:
                 antecedent = a.toString() + implication + b.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
                 break;
             case 2:
                 Atom c = gen.generateAtom();
                 antecedent = a.toString() + implication + b.toString() + implication + c.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
-                // curRankAtoms.add(c);
                 break;
         }
         switch(complexityCon){
@@ -212,23 +288,25 @@ public class DefImplicationBuilder{
                 break;
             case 1:
                 consequent = a.toString() + implication + b.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
                 break;
             case 2:
                 Atom c = gen.generateAtom();
                 consequent = a.toString() + implication + b.toString() + implication + c.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
-                // curRankAtoms.add(c);
                 break;
         }
         DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex DIs using the bi-implication connective.
+    /**
+     * Method to generate complex DIs using the bi-implication connective.
+     *
+     * @param key          The key specifying the type and complexity of the complex DI.
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param curRankAtoms The list of atoms usable in the current rank.
+     */
     public static void biImplicationDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
-        Collections.shuffle(curRankAtoms); //// optimise
+        Collections.shuffle(curRankAtoms);
         String biimplication = con.getBiImplicationSymbol();
         String antecedent = "";
         String consequent = "";
@@ -242,15 +320,10 @@ public class DefImplicationBuilder{
                 break;
             case 1:
                 antecedent = a.toString() + biimplication + b.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
                 break;
             case 2:
                 Atom c = gen.generateAtom();
                 antecedent = a.toString() + biimplication + b.toString() + biimplication + c.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
-                // curRankAtoms.add(c);
                 break;
         }
         switch(complexityCon){
@@ -259,23 +332,25 @@ public class DefImplicationBuilder{
                 break;
             case 1:
                 consequent = a.toString() + biimplication + b.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
                 break;
             case 2:
                 Atom c = gen.generateAtom();
                 consequent = a.toString() + biimplication + b.toString() + biimplication + c.toString();
-                // curRankAtoms.add(a);
-                // curRankAtoms.add(b);
-                // curRankAtoms.add(c);
                 break;
         }
         DIs.add(new DefImplication(antecedent, consequent));
     }
 
-    // Method to generate complex DIs using a mixture of connectives.
+    /**
+     * Method to generate complex DIs using a mixture of connectives.
+     *
+     * @param key          The key specifying the type and complexity of the complex DI.
+     * @param gen          An AtomBuilder instance for generating atoms.
+     * @param DIs          The list of defeasible implications in the KB.
+     * @param curRankAtoms The list of atoms usable in the current rank.
+     */
     public static void mixedDI(String key, AtomBuilder gen, ArrayList<DefImplication> DIs, ArrayList<Atom> curRankAtoms){
-        Collections.shuffle(curRankAtoms); //// optimise
+        Collections.shuffle(curRankAtoms);
         int[] connective = {0,1,2,3};
         String antecedent = "";
         String consequent = "";

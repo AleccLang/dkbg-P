@@ -1,31 +1,14 @@
+/**
+ * The App class is responsible for generating a knowledge base (KB) of defeasible implications based on user-defined parameters.
+ */
 package com.demo;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.*;
 
-// Program input is as follows:
-/* 
-* 1) No. of ranks [int]
-* 2) Distribution [options] // min 2 per rank, other than rank 0
-* 3) No. defImplications [int]
-* 4) Simple only [y/n]
-* 5) Reuse Consequent [y/n]
-* 6) Antecedent complexity (if simple only then skip)  [0,1,2] choose any number
-* 7) Consequent complexity (if simple only then skip) [0,1,2] choose any number
-* 8) Connective types [1,2,3,4,5] choose any number (1=disjuntion, 2=conjunction, 3=implication, 4=biimplication, 5=mix) if 1:1 1:2 2:1 2:2 then imp/bi-imp won't work.
-* 9) Choose connective symbols [defeasible implication, disjuntion, conjunction, implication, biimplication)]
-* 10) Choose atom character set [lowerlatin, upperlatin, altlatin, greek]
-* 11) Choose which generator to use [standard, threaded]
-* 12) Choose if you just want it printed or if you also want a txt file.
-* 13) Choose if you want to regenerate a new KB using same settings, change the settings, or quit.
-*/
 public class App 
 {
     private static Connective con = Connective.getInstance();
@@ -36,6 +19,11 @@ public class App
     private static int filenum = 1;
     private static String choice;
 
+    /**
+     * The main method for running the knowledge base (KB) generation program.
+     *
+     * @param args Command-line arguments.
+     */
     public static void main( String[] args ){
         Rules r = new Rules();
         Scanner in = new Scanner(System.in);
@@ -75,7 +63,7 @@ public class App
                 numDefImplications = in.nextInt();
             }
 
-            int[] defImplicationDistribution = Distribution.distributeDefImplications(numDefImplications, numRanks, distribution);
+            int[] defImplicationDistribution = Distribution.distributeDIs(numDefImplications, numRanks, distribution);
 
             System.out.println("Simple defImplications only? [y, n]:");
             System.out.print("> ");
@@ -147,7 +135,7 @@ public class App
                 System.out.print("> ");
                 String defImp = in.next();
                 boolean chng = (defImp.equalsIgnoreCase("s")) ? true : false;
-                if(chng == false){con.setDefImplicationSymbol(defImp);} // Sets defeasible implication symbol
+                if(chng == false){con.setDISymbol(defImp);} // Sets defeasible implication symbol
                 
                 if(simple == false){
                     System.out.println("Default Conjunction symbol: & ['s' to skip]");
@@ -234,7 +222,7 @@ public class App
                     boolean s = simple;
                     do{
                         ExecutorService executor = Executors.newSingleThreadExecutor();
-                        long timeoutDuration = 1130000;
+                        long timeoutDuration = 1125000;
                         try{
                             Callable<LinkedHashSet<LinkedHashSet<DefImplication>>> kbGenerationTask = () -> {
                                 return KBGeneratorThreaded.KBGenerate(defImplicationDistribution, s, complexityAnt, complexityCon, connectiveTypes);
@@ -256,7 +244,7 @@ public class App
                             gen.reset();
                             rerun = true;
                         }catch(InterruptedException | ExecutionException e){
-                            //e.printStackTrace();
+
                         }finally{
                             executor.shutdownNow();
                         }
@@ -302,27 +290,44 @@ public class App
                 choice = in.next();
                 
             }while(choice.equalsIgnoreCase("r"));
-            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            System.out.println("||||||||||||||||||||||||||||||||||||||||||||||||||||");
-            System.out.println("Total: " + tot/2);
             tot = 0;
         }while(choice.equalsIgnoreCase("c"));
         System.out.println("Quitting");
         in.close();
     }
-    
+
+    // Private helper methods
+
+    /**
+     * Checks if the input string is a valid distribution type.
+     *
+     * @param input The input string to check.
+     * @return True if the input is a valid distribution type, otherwise false.
+     */
     private static boolean validDistribution(String input){
         return input.equalsIgnoreCase("f") || input.equalsIgnoreCase("lg") ||
                input.equalsIgnoreCase("ld") || input.equalsIgnoreCase("r");
     }
 
+    /**
+     * Checks if the input string is a valid character set.
+     *
+     * @param input The input string to check.
+     * @return True if the input is a valid character set, otherwise false.
+     */
     private static boolean validCharacterSet(String input){
         return input.equalsIgnoreCase("lowerlatin") || input.equalsIgnoreCase("upperlatin") ||
                input.equalsIgnoreCase("altlatin") || input.equalsIgnoreCase("greek");
     }
 
+
+    /**
+     * Calculates the minimum number of defImplications required based on the distribution type and number of ranks.
+     *
+     * @param distribution The distribution type.
+     * @param numRanks     The number of ranks in the knowledge base.
+     * @return The minimum number of defImplications required.
+     */
     private static int minDefImplications(String distribution, int numRanks){
         int min = 0;
         switch(distribution){
@@ -330,10 +335,10 @@ public class App
                 min = (numRanks*2)-1;
                 break;
             case "lg":
-                min = Distribution.minDefImplicationsLinear(numRanks);
+                min = Distribution.minDIsLinear(numRanks);
                 break;
             case "ld":
-                min = Distribution.minDefImplicationsLinearDecline(numRanks);
+                min = Distribution.minDIsLinearDecline(numRanks);
                 break;
             case "r":
                 min = (numRanks*2);
@@ -342,8 +347,13 @@ public class App
         return min;
     }
 
+    /**
+     * Writes a knowledge base to a text file.
+     *
+     * @param KB The knowledge base to write to the file.
+     */
     private static void kbToFile(LinkedHashSet<LinkedHashSet<DefImplication>> KB){
-        String filePath = "output" + filenum + ".txt"; // Specify the file path
+        String filePath = "output" + filenum + ".txt";
         filenum++;
         try{
             File file = new File(filePath);

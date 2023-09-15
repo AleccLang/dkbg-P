@@ -1,12 +1,17 @@
+/**
+ * The Rules class defines and manages the rules controlling the generation of complex defeasible implications.
+ */
 package com.demo;
 
 import java.util.HashMap;
 
-// Determines if a complex statement can be generated given the current state of the knowledgebase.
 public class Rules{
     
     private static HashMap<String, String> keyMap; // Hashmap of complex statements and their required available currRankAtoms
 
+    /**
+     * Constructor for the Rules class. Initializes the keyMap with rules for generating complex statements.
+     */
     public Rules(){
         // Key = "connectionType,complexityAnt,complexityCon"
         // Value = "currRankAtoms.length()"
@@ -51,8 +56,13 @@ public class Rules{
         keyMap.put("5,2,2", "2");
     }
 
-    /*  Checks if there are enough currRankAtoms available to generate a statement for a given key and returns key if
-    it is valid.*/
+    /**
+     * Checks if there are enough currRankAtoms available to generate a statement for a given key and returns the key if it is valid.
+     *
+     * @param key           The key representing the statement to be generated.
+     * @param curRankAtomNum The number of available current rank atoms.
+     * @return The key if it is valid; otherwise, "1,0,0" indicating the generation of a simple DI.
+     */
     public static String checker(String key, int curRankAtomNum){
         String temp = keyMap.get(key);
         // Do this to avoid problems with implication and bi-implication.
@@ -65,7 +75,15 @@ public class Rules{
         }
     }
 
-    // Generates a statement key.
+    /**
+     * Generates a statement key based on available connection types and complexities for antecedent and consequent.
+     *
+     * @param connectionType The available connection types.
+     * @param complexityAnt  The available complexities for the antecedent.
+     * @param complexityCon  The available complexities for the consequent.
+     * @param curRankAtomNum The number of available current rank atoms.
+     * @return A statement key representing the type of statement to be generated.
+     */
     public static String keyGenerator(int[] connectionType, int[] complexityAnt, int[] complexityCon, int curRankAtomNum){
         int i = (int)(Math.random() * connectionType.length); // Get random connectionType from those available.
         int j = (int)(Math.random() * complexityAnt.length); // Get random connectionType from those available.
