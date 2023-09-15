@@ -18,14 +18,16 @@ Requirements for the project to be run:
 ## Build
 Run the following command in the main directory to build the package.
 
-Build: $ mvn clean package
+Build: 
+* $ mvn clean package
 
 ## Run
 The program may then be run.
 Input may be directly input via the command-line interface or placed in a textfile and directly run with the program as shown indicated below.
 
-Run: $ java -cp target/dkbg-1.0.jar com.demo.App or
-     $ java -cp target/dkbg-1.0.jar com.demo.App < input.txt
+Run: 
+* $ java -cp target/dkbg-1.0.jar com.demo.App
+* $ java -cp target/dkbg-1.0.jar com.demo.App < input.txt
 
 ## Program Input
 
